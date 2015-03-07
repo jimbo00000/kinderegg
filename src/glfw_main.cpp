@@ -69,7 +69,7 @@ int main(int argc, char** argv)
     bool useOpenGLCoreContext = false;
 
 #ifdef USE_CORE_CONTEXT
-    useOpenGLCoreContext = true;
+   // useOpenGLCoreContext = true;
 #endif
 
 #ifdef _LINUX
@@ -132,7 +132,6 @@ int main(int argc, char** argv)
 
     glfwMakeContextCurrent(l_Window);
 
-
     // Don't forget to initialize Glew, turn glewExperimental on to
     // avoid problems fetching function pointers...
     glewExperimental = GL_TRUE;
@@ -142,12 +141,45 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
+    GLuint l_vao = 0;
+    glGenVertexArrays(1, &l_vao);
+    glBindVertexArray(l_vao);
+
+    GLuint program = glCreateProgram();
+    GLuint vsId = glCreateShader(GL_VERTEX_SHADER);
+    GLuint fsId = glCreateShader(GL_FRAGMENT_SHADER);
+    const GLchar* pVsSrcStr = "in vec2 vPosition; void main(){gl_Position = vec4(vPosition, 0., 1.)}";
+    const GLchar* pFsSrcStr = "in vec2 vfTex; out vec4 fragColor; void main(){fragColor = vec4(1.,1.,0.,1.)}";
+    int length = strlen(pVsSrcStr);
+    glShaderSource(vsId, 1, &pVsSrcStr, &length);
+    length = strlen(pFsSrcStr);
+    glShaderSource(fsId, 1, &pVsSrcStr, &length);
+
+    glCompileShader(vsId);
+    glCompileShader(fsId);
+    glAttachShader(program, vsId);
+    glAttachShader(program, fsId);
+    glLinkProgram(program);
+    glUseProgram(0);//program);
+
     while (!glfwWindowShouldClose(l_Window))
     {
         glfwPollEvents();
 
-        glClearColor(0.f, 1.f, 0.f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT);
+#if 1
+        glBegin(GL_TRIANGLES);
+        glColor3f(1.f, 0.f, 0.f);
+        glVertex3f(0.f, 0.f, 0.f);
+
+        glColor3f(0.f, 1.f, 0.f);
+        glVertex3f(1.f, 0.f, 0.f);
+
+        glColor3f(0.f, 0.f, 1.f);
+        glVertex3f(0.f, 1.f, 0.f);
+
+        glEnd();
+#endif
+
         glfwSwapBuffers(l_Window);
     }
 
