@@ -29,7 +29,8 @@
 #include "Timer.h"
 
 Timer g_timer;
-
+int winw = 800;
+int winh = 600;
 
 struct Shadertoy {
     GLuint prog;
@@ -76,6 +77,14 @@ void keyboard(GLFWwindow* pWindow, int key, int codes, int action, int mods)
 void resize(GLFWwindow* pWindow, int w, int h)
 {
     (void)pWindow;
+}
+
+void display()
+{
+    glUseProgram(g_toy.prog);
+    if (g_toy.uloc_iResolution > -1) glUniform3f(g_toy.uloc_iResolution, (float)winw, (float)winh, 1.f);
+    if (g_toy.uloc_iGlobalTime > -1) glUniform1f(g_toy.uloc_iGlobalTime, g_timer.seconds());
+    glRecti(-1,-1,1,1);
 }
 
 int main(int argc, char** argv)
@@ -132,9 +141,6 @@ int main(int argc, char** argv)
 #endif
     }
 
-    int winw = 800;
-    int winh = 600;
-
     glfwWindowHint(GLFW_SAMPLES, 0);
     l_Window = glfwCreateWindow(winw, winh, "kinderegg", NULL, NULL);
     if (!l_Window)
@@ -169,12 +175,7 @@ int main(int argc, char** argv)
     while (!glfwWindowShouldClose(l_Window))
     {
         glfwPollEvents();
-
-        glUseProgram(g_toy.prog);
-        if (g_toy.uloc_iResolution > -1) glUniform3f(g_toy.uloc_iResolution, (float)winw, (float)winh, 1.f);
-        if (g_toy.uloc_iGlobalTime > -1) glUniform1f(g_toy.uloc_iGlobalTime, g_timer.seconds());
-        glRecti(-1,-1,1,1);
-
+        display();
         glfwSwapBuffers(l_Window);
     }
 
