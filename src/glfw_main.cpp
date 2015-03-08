@@ -154,8 +154,8 @@ int main(int argc, char** argv)
     glBindVertexArray(l_vao);
 
     const GLuint prog = makeShaderByName("basic");
-    GLint uloc_iResolution = glGetUniformLocation(prog, "iResolution");
-    GLint uloc_iGlobalTime = glGetUniformLocation(prog, "iGlobalTime");
+    const GLint uloc_iResolution = glGetUniformLocation(prog, "iResolution");
+    const GLint uloc_iGlobalTime = glGetUniformLocation(prog, "iGlobalTime");
 
     while (!glfwWindowShouldClose(l_Window))
     {
