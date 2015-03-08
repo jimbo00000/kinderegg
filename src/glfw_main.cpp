@@ -26,6 +26,9 @@
 #include <sstream>
 
 #include "ShaderFunctions.h"
+#include "Timer.h"
+
+Timer g_timer;
 
 // Set VSync is framework-dependent and has to come before the include
 ///@param state 0=off, 1=on, -1=adaptive
@@ -152,6 +155,7 @@ int main(int argc, char** argv)
 
     const GLuint prog = makeShaderByName("basic");
     GLint uloc_iResolution = glGetUniformLocation(prog, "iResolution");
+    GLint uloc_iGlobalTime = glGetUniformLocation(prog, "iGlobalTime");
 
     while (!glfwWindowShouldClose(l_Window))
     {
@@ -159,6 +163,7 @@ int main(int argc, char** argv)
 
         glUseProgram(prog);
         if (uloc_iResolution > -1) glUniform3f(uloc_iResolution, (float)winw, (float)winh, 1.f);
+        if (uloc_iGlobalTime > -1) glUniform1f(uloc_iGlobalTime, g_timer.seconds());
         glRecti(-1,-1,1,1);
 
         glfwSwapBuffers(l_Window);
