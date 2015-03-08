@@ -185,12 +185,15 @@ ENDIF()
 #
 # Platform-independent section
 #
-FILE( GLOB_RECURSE SOURCE_FILES
-    src/*.cpp
-    src/*.h
+FILE( GLOB_RECURSE UTIL_SOURCE_FILES
+    src/Util/*.cpp
+    src/Util/*.h
     )
 
 INCLUDE_DIRECTORIES("src")
+INCLUDE_DIRECTORIES("src/util")
+
+ADD_LIBRARY( Util ${UTIL_SOURCE_FILES} )
 
 IF( GL_FRAMEWORK STREQUAL "GLFW" )
     ADD_EXECUTABLE( ${PROJECT_NAME} src/glfw_main.cpp ${SOURCE_FILES} )
@@ -201,5 +204,6 @@ ELSEIF( GL_FRAMEWORK STREQUAL "SFML" )
 ENDIF()
 
 TARGET_LINK_LIBRARIES( ${PROJECT_NAME}
+    Util
     ${PLATFORM_LIBS}
     )
