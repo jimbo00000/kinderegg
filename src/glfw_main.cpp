@@ -30,6 +30,15 @@
 
 Timer g_timer;
 
+
+struct Shadertoy {
+    GLuint prog;
+    GLint uloc_iResolution;
+    GLint uloc_iGlobalTime;
+};
+
+Shadertoy g_toy;
+
 // Set VSync is framework-dependent and has to come before the include
 ///@param state 0=off, 1=on, -1=adaptive
 // Set vsync for both contexts.
@@ -153,17 +162,17 @@ int main(int argc, char** argv)
     glGenVertexArrays(1, &l_vao);
     glBindVertexArray(l_vao);
 
-    const GLuint prog = makeShaderByName("basic");
-    const GLint uloc_iResolution = glGetUniformLocation(prog, "iResolution");
-    const GLint uloc_iGlobalTime = glGetUniformLocation(prog, "iGlobalTime");
+    g_toy.prog = makeShaderByName("basic");
+    g_toy.uloc_iResolution = glGetUniformLocation(g_toy.prog, "iResolution");
+    g_toy.uloc_iGlobalTime = glGetUniformLocation(g_toy.prog, "iGlobalTime");
 
     while (!glfwWindowShouldClose(l_Window))
     {
         glfwPollEvents();
 
-        glUseProgram(prog);
-        if (uloc_iResolution > -1) glUniform3f(uloc_iResolution, (float)winw, (float)winh, 1.f);
-        if (uloc_iGlobalTime > -1) glUniform1f(uloc_iGlobalTime, g_timer.seconds());
+        glUseProgram(g_toy.prog);
+        if (g_toy.uloc_iResolution > -1) glUniform3f(g_toy.uloc_iResolution, (float)winw, (float)winh, 1.f);
+        if (g_toy.uloc_iGlobalTime > -1) glUniform1f(g_toy.uloc_iGlobalTime, g_timer.seconds());
         glRecti(-1,-1,1,1);
 
         glfwSwapBuffers(l_Window);
