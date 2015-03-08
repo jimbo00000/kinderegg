@@ -120,8 +120,11 @@ int main(int argc, char** argv)
 #endif
     }
 
+    int winw = 800;
+    int winh = 600;
+
     glfwWindowHint(GLFW_SAMPLES, 0);
-    l_Window = glfwCreateWindow(800, 600, "kinderegg", NULL, NULL);
+    l_Window = glfwCreateWindow(winw, winh, "kinderegg", NULL, NULL);
     if (!l_Window)
     {
         glfwTerminate();
@@ -148,12 +151,14 @@ int main(int argc, char** argv)
     glBindVertexArray(l_vao);
 
     const GLuint prog = makeShaderByName("basic");
+    GLint uloc_iResolution = glGetUniformLocation(prog, "iResolution");
 
     while (!glfwWindowShouldClose(l_Window))
     {
         glfwPollEvents();
 
         glUseProgram(prog);
+        if (uloc_iResolution > -1) glUniform3f(uloc_iResolution, (float)winw, (float)winh, 1.f);
         glRecti(-1,-1,1,1);
 
         glfwSwapBuffers(l_Window);
