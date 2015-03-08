@@ -23,9 +23,20 @@
 #include <string.h>
 #include <sstream>
 
+#include "ShaderFunctions.h"
 #include "Timer.h"
 
 Timer g_timer;
+int winw = 800;
+int winh = 600;
+
+struct Shadertoy {
+    GLuint prog;
+    GLint uloc_iResolution;
+    GLint uloc_iGlobalTime;
+};
+
+Shadertoy g_toy;
 
 
 void PollEvents()
@@ -60,6 +71,14 @@ void PollEvents()
             break;
         }
     }
+}
+
+void display()
+{
+    glUseProgram(g_toy.prog);
+    if (g_toy.uloc_iResolution > -1) glUniform3f(g_toy.uloc_iResolution, (float)winw, (float)winh, 1.f);
+    if (g_toy.uloc_iGlobalTime > -1) glUniform1f(g_toy.uloc_iGlobalTime, g_timer.seconds());
+    glRecti(-1,-1,1,1);
 }
 
 
@@ -111,12 +130,16 @@ int main(void)
         exit(EXIT_FAILURE);
     }
 
+    g_toy.prog = makeShaderByName("basic");
+    g_toy.uloc_iResolution = glGetUniformLocation(g_toy.prog, "iResolution");
+    g_toy.uloc_iGlobalTime = glGetUniformLocation(g_toy.prog, "iGlobalTime");
 
     int quit = 0;
     while (quit == 0)
     {
         PollEvents();
-
+        display();
+        SDL_GL_SwapWindow(pWindow);
     }
 
     SDL_GL_DeleteContext(glContext);
