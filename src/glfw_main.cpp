@@ -147,8 +147,7 @@ int main(int argc, char** argv)
     glGenVertexArrays(1, &l_vao);
     glBindVertexArray(l_vao);
 
-    GLuint prog = makeShaderByName("basic");
-
+    const GLuint prog = makeShaderByName("basic");
 
     while (!glfwWindowShouldClose(l_Window))
     {

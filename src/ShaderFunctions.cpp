@@ -17,6 +17,8 @@
 
 #include <GL/glew.h>
 
+#include "ShaderFunctions.h"
+
 #if 1
 #include "g_shaders.h"
 #else
@@ -44,7 +46,6 @@ void printShaderInfoLog(GLuint obj)
     {
         std::cout << " NOT FOUND" << std::endl;
     }
-    else std::cout << "OK ";
 }
 
 // Got this from http://www.lighthouse3d.com/opengl/glsl/index.php?oglinfo
@@ -62,7 +63,6 @@ void printProgramInfoLog(GLuint obj)
         std::cout << std::endl << infoLog << std::endl;
         delete [] infoLog;
     }
-    else std::cout << "OK ";
 }
 
 std::string slurp(std::ifstream& in)
@@ -72,20 +72,16 @@ std::string slurp(std::ifstream& in)
     return sstr.str();
 }
 
-/// Return the contents of a given filename in the ../shaders/ directory.
-const std::string GetShaderSourceFromFile(const char* filename)
+/// Return the contents of a given filename in the given directory.
+const std::string GetShaderSourceFromFile(const char* filename, const std::string path)
 {
-    std::cout << "<<file>> ";
-
     std::string shaderName = filename;
-    std::string shaderPath = "../shaders/"; ///@todo Check parent paths
-    std::string fullShaderName = shaderPath + shaderName;
+    std::string fullShaderName = path + shaderName; ///@todo Check parent paths
 
     std::ifstream file;
     file.open(fullShaderName.c_str(), std::ios::in);
     if (!file.is_open())
     {
-        std::cerr << "No file " << filename << std::endl;
         return "";
     }
 
@@ -100,8 +96,6 @@ const std::string GetShaderSourceFromFile(const char* filename)
 /// @note Memory is allocated using new, delete [] it when done.
 const GLchar* GetShaderSourceFromTable(const char* filename)
 {
-    std::cout << "  <<table>> ";
-
     if (g_shaderMap.empty())
     {
         initShaderList();
@@ -131,6 +125,8 @@ const std::string GetShaderSource(const char* filename)
     /// garbage characters in the shader source string.
     ///@todo Why does loading shaders in Linux yield extra garbage characters?
     const std::string fileSrc = "";
+//#elif defined(_MACOS)
+//    const std::string fileSrc = "";
 #else
     const std::string fileSrc = GetShaderSourceFromFile(filename);
 #endif
@@ -170,11 +166,11 @@ GLuint makeShaderFromSource(
     const char* frag,
     const char* geom)
 {
-    std::cout << "  vs-";
+    std::cout << "vs-";
     GLuint vertSrc = loadShaderFile(vert, GL_VERTEX_SHADER);
     printShaderInfoLog(vertSrc);
 
-    std::cout << "  fs-";
+    std::cout << "fs";
     GLuint fragSrc = loadShaderFile(frag, GL_FRAGMENT_SHADER);
     printShaderInfoLog(fragSrc);
 
@@ -209,17 +205,14 @@ GLuint makeShaderFromSource(
     // Initialize Geometry shader state after creation, before linking.
     if (geomSrc)
     {
-        std::cout << "  gs-";
+        std::cout << "gs-";
         printShaderInfoLog(geomSrc);
         glCompileShader(geomSrc);
         glAttachShader (program, geomSrc);
     }
 
     glLinkProgram(program);
-    std::cout << "  prog: ";
     printProgramInfoLog(program);
-
-    std::cout << std::endl;
 
     glUseProgram(0);
     return program;
