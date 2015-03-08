@@ -6,22 +6,10 @@
 #  include <windows.h>
 #endif
 
-#include <sstream>
-
 #include <GL/glew.h>
 #include <SDL.h>
 #include <SDL_syswm.h>
 #undef main
-
-#include <glm/gtc/type_ptr.hpp>
-
-#ifdef USE_ANTTWEAKBAR
-#  include <AntTweakBar.h>
-#endif
-
-#include <stdio.h>
-#include <string.h>
-#include <sstream>
 
 #include "ShaderFunctions.h"
 #include "Timer.h"
