@@ -1,7 +1,12 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.6 )
 PROJECT( kinderegg )
 
-# GLFW, SDL
+INCLUDE(cmake_modules/InvokePython.cmake)
+INVOKEPYTHON( "tools/hardcode_shaders.py" )
+# Python script will dump generated headers to autogen/
+INCLUDE_DIRECTORIES("autogen/")
+
+# GLFW, SDL, SFML
 SET( GL_FRAMEWORK "GLFW" CACHE STRING "Which OpenGL windowing framework to use" )
 
 SET( USE_CORE_CONTEXT TRUE CACHE BOOL "Use Core Context" )
@@ -188,11 +193,11 @@ FILE( GLOB_RECURSE SOURCE_FILES
 INCLUDE_DIRECTORIES("src")
 
 IF( GL_FRAMEWORK STREQUAL "GLFW" )
-    ADD_EXECUTABLE( ${PROJECT_NAME} src/glfw_main.cpp )
+    ADD_EXECUTABLE( ${PROJECT_NAME} src/glfw_main.cpp ${SOURCE_FILES} )
 ELSEIF( GL_FRAMEWORK STREQUAL "SDL" )
-    ADD_EXECUTABLE( ${PROJECT_NAME} src/sdl_main.cpp )
+    ADD_EXECUTABLE( ${PROJECT_NAME} src/sdl_main.cpp ${SOURCE_FILES} )
 ELSEIF( GL_FRAMEWORK STREQUAL "SFML" )
-    ADD_EXECUTABLE( ${PROJECT_NAME} src/sfml_main.cpp )
+    ADD_EXECUTABLE( ${PROJECT_NAME} src/sfml_main.cpp ${SOURCE_FILES} )
 ENDIF()
 
 TARGET_LINK_LIBRARIES( ${PROJECT_NAME}

@@ -25,6 +25,8 @@
 #include <string.h>
 #include <sstream>
 
+#include "ShaderFunctions.h"
+
 // Set VSync is framework-dependent and has to come before the include
 ///@param state 0=off, 1=on, -1=adaptive
 // Set vsync for both contexts.
@@ -145,27 +147,14 @@ int main(int argc, char** argv)
     glGenVertexArrays(1, &l_vao);
     glBindVertexArray(l_vao);
 
-    GLuint program = glCreateProgram();
-    GLuint vsId = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fsId = glCreateShader(GL_FRAGMENT_SHADER);
-    const GLchar* pVsSrcStr = "in vec2 vPosition; void main(){gl_Position = vec4(vPosition, 0., 1.)}";
-    const GLchar* pFsSrcStr = "in vec2 vfTex; out vec4 fragColor; void main(){fragColor = vec4(1.,1.,0.,1.)}";
-    int length = strlen(pVsSrcStr);
-    glShaderSource(vsId, 1, &pVsSrcStr, &length);
-    length = strlen(pFsSrcStr);
-    glShaderSource(fsId, 1, &pVsSrcStr, &length);
+    GLuint prog = makeShaderByName("basic");
 
-    glCompileShader(vsId);
-    glCompileShader(fsId);
-    glAttachShader(program, vsId);
-    glAttachShader(program, fsId);
-    glLinkProgram(program);
-    glUseProgram(0);//program);
 
     while (!glfwWindowShouldClose(l_Window))
     {
         glfwPollEvents();
 
+        glUseProgram(prog);
 #if 1
         glBegin(GL_TRIANGLES);
         glColor3f(1.f, 0.f, 0.f);
