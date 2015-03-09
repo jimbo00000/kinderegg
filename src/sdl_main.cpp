@@ -27,6 +27,26 @@ struct Shadertoy {
 Shadertoy g_toy;
 
 
+void keyboard(const SDL_Event& event, int key, int codes, int action, int mods)
+{
+    (void)codes;
+    (void)mods;
+
+    if (action == SDL_KEYDOWN)
+    {
+        switch (key)
+        {
+        default:
+            break;
+
+        case SDLK_ESCAPE:
+            SDL_Quit();
+            exit(0);
+            break;
+        }
+    }
+}
+
 void PollEvents()
 {
     SDL_Event event;
@@ -36,6 +56,7 @@ void PollEvents()
         {
         case SDL_KEYDOWN:
         case SDL_KEYUP:
+            keyboard(event, event.key.keysym.sym, 0, event.key.type, 0);
             break;
 
         case SDL_MOUSEBUTTONDOWN:
