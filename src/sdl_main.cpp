@@ -95,76 +95,60 @@ void display()
 // Audio
 //
 
-// prototype for our audio callback
-void my_audio_callback(void *userdata, Uint8 *stream, int len);
+struct
+{
+    SDL_AudioSpec spec;
+    Uint8 *sound;               /* Pointer to wave data */
+    Uint32 soundlen;            /* Length of wave data */
+    int soundpos;               /* Current play position */
+} wave;
 
-const int samps = 1024*8; // 65536 bytes appears to be max chunk size
-const int bufSz = samps*sizeof(Sint16); //*channels
-Uint8 *sound_buffer = NULL;
-Uint32 audio_pos = 0;
-int counter = 0;
+void SDLCALL fillerup(void *unused, Uint8 * stream, int len)
+{
+    Uint8 *waveptr;
+    int waveleft;
 
+    waveptr = wave.sound + wave.soundpos;
+    waveleft = wave.soundlen - wave.soundpos;
+
+    while (waveleft <= len) { // wrap condition
+        SDL_memcpy(stream, waveptr, waveleft);
+        stream += waveleft;
+        len -= waveleft;
+        waveptr = wave.sound;
+        waveleft = wave.soundlen;
+        wave.soundpos = 0;
+    }
+    SDL_memcpy(stream, waveptr, len);
+    wave.soundpos += len;
+}
 
 void play_audio()
 {
-    sound_buffer = new Uint8[bufSz];
-    audio_pos = 0;
-
-    static SDL_AudioSpec wav_spec;
-    wav_spec.freq = 44100;
-    wav_spec.format = AUDIO_S16LSB;
-    wav_spec.channels = 1;
-    wav_spec.samples = samps;
-    wav_spec.callback = my_audio_callback;
-    wav_spec.userdata = NULL;
-
-    // Open the audio device
-    if ( SDL_OpenAudio(&wav_spec, NULL) < 0 )
+    // init buffer
+    wave.soundlen = 128*1024;
+    //wav_spec.samples = samps;
+    wave.sound = new Uint8[wave.soundlen];
+    // Fill with noise
+    for (int i=0; i<wave.soundlen/2; ++i)
     {
-        fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
-        exit(-1);
+        wave.sound[i] = rand() % 255;
     }
+
+    wave.spec.freq = 44100;
+    wave.spec.format = AUDIO_U8; //AUDIO_S16LSB;
+    wave.spec.channels = 2;
+    wave.spec.callback = fillerup;
+
+    if (SDL_OpenAudio(&wave.spec, NULL) < 0)
+    {
+        SDL_FreeWAV(wave.sound);
+        SDL_Quit();
+        exit(2);
+    }
+
     SDL_PauseAudio(0); // Start playing
 }
-
-int cb = 0;
-
-// audio callback function
-// here you have to copy the data of your audio buffer into the requesting audio buffer (stream)
-// you should only copy as much as the requested length (len)
-void my_audio_callback(void *userdata, Uint8 *stream, int len)
-{
-    printf("   callback:  %x  %d  counter:%d   ap: %d\n", stream, len, counter, audio_pos);
-
-    double pi = 3.1415;
-    double Hz = 440 * ((cb%2)+1);// + (counter/256);
-    double A = 32767;
-    double SR = 44100;
-    double F=2*pi*Hz/SR;
-
-    Sint16* stream16 = reinterpret_cast<Sint16*>(sound_buffer);
-    const int len16 = len / sizeof(Sint16);
-    for (int z = 0; z<len16; z++)
-    {
-        counter++;
-        stream16[z] = (Sint16) A*sin(F*(double)counter);
-    }
-
-    // Loop to beginning of buffer
-    if (audio_pos + len > bufSz)
-    {
-        audio_pos = 0;
-    }
-
-    SDL_memset(stream, 0, len);
-    const Uint8* apos = sound_buffer + audio_pos;
-    //SDL_memcpy (stream, apos, len);                  // simply copy from one buffer into the other
-    SDL_MixAudio(stream, apos, len, SDL_MIX_MAXVOLUME);// mix from one buffer into another
-
-    audio_pos += len;
-    ++cb;
-}
-
 
 
 int main(void)
@@ -219,7 +203,7 @@ int main(void)
     g_toy.uloc_iResolution = glGetUniformLocation(g_toy.prog, "iResolution");
     g_toy.uloc_iGlobalTime = glGetUniformLocation(g_toy.prog, "iGlobalTime");
 
-    //play_audio();
+    play_audio();
 
     int quit = 0;
     while (quit == 0)
@@ -232,5 +216,6 @@ int main(void)
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(pWindow);
     SDL_CloseAudio();
+    SDL_FreeWAV(wave.sound);
     SDL_Quit();
 }
