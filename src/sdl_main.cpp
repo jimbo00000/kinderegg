@@ -20,8 +20,11 @@ int winh = 600;
 
 struct Shadertoy {
     GLuint prog;
-    GLint uloc_iResolution;
-    GLint uloc_iGlobalTime;
+	GLuint progsound;
+	GLint uloc_iResolution;
+	GLint uloc_iGlobalTime;
+	GLint uloc_iBlockOffset;
+	GLint uloc_iSampleRate;
 };
 
 Shadertoy g_toy;
@@ -140,6 +143,41 @@ void play_audio()
     wave.spec.channels = 2;
     wave.spec.callback = fillerup;
 
+	// shadertoy effect.js 135
+	//this.mSampleRate = 44100;
+	//this.mPlayTime = 60;
+	//this.mPlaySamples = this.mPlayTime*this.mSampleRate;
+	//this.mBuffer = wa.createBuffer(2, this.mPlaySamples, this.mSampleRate);
+	//var l2   = gl.getUniformLocation( this.mProgram, "iBlockOffset" );
+
+	// render effect.js 983
+#if 0
+	// bufL: Float32Array[2646000]
+	// numBlocks: 10.09368896484375
+	var bufL = this.mBuffer.getChannelData(0); // Float32Array
+	var bufR = this.mBuffer.getChannelData(1); // Float32Array
+	var numBlocks = this.mPlaySamples / this.mTmpBufferSamples;
+	for (var j = 0; j<numBlocks; j++)
+	{
+		var off = j*this.mTmpBufferSamples; // mTmpBufferSamples: 262144
+
+		gl.uniform1f(l2, off / this.mSampleRate);
+		gl.drawArrays(gl.TRIANGLES, 0, 6);
+		// mTextureDimensions: 512
+		gl.readPixels(0, 0, this.mTextureDimensions, this.mTextureDimensions, gl.RGBA, gl.UNSIGNED_BYTE, this.mData);
+
+		for (var i = 0; i<this.mTmpBufferSamples; i++)
+		{
+			bufL[off + i] = -1.0 + 2.0*(this.mData[4 * i + 0] + 256.0*this.mData[4 * i + 1]) / 65535.0;
+			bufR[off + i] = -1.0 + 2.0*(this.mData[4 * i + 2] + 256.0*this.mData[4 * i + 3]) / 65535.0;
+		}
+	}
+
+	gl.disableVertexAttribArray(l1);
+	gl.useProgram(null);
+	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+#endif
+
     if (SDL_OpenAudio(&wave.spec, NULL) < 0)
     {
         SDL_FreeWAV(wave.sound);
@@ -202,6 +240,12 @@ int main(void)
     g_toy.prog = makeShaderByName("basic");
     g_toy.uloc_iResolution = glGetUniformLocation(g_toy.prog, "iResolution");
     g_toy.uloc_iGlobalTime = glGetUniformLocation(g_toy.prog, "iGlobalTime");
+	g_toy.progsound = makeShaderByName("basicsound");
+	g_toy.uloc_iBlockOffset = glGetUniformLocation(g_toy.progsound, "iBlockOffset");
+	g_toy.uloc_iSampleRate = glGetUniformLocation(g_toy.progsound, "iSampleRate");
+
+	//var l2   = gl.getUniformLocation( this.mProgram, "" );
+
 
     play_audio();
 
