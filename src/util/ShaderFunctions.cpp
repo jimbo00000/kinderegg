@@ -116,23 +116,8 @@ const GLchar* GetShaderSourceFromTable(const char* filename)
     return NULL;
 }
 
-/// Return shader source from filename, if it can be retrieved.
-/// If not, fall back to the hard-coded array in our global std::map.
 const std::string GetShaderSource(const char* filename)
 {
-#ifdef _LINUX
-    /// Linux exhibits odd behavior when loading shader from file - trailing
-    /// garbage characters in the shader source string.
-    ///@todo Why does loading shaders in Linux yield extra garbage characters?
-    const std::string fileSrc = "";
-//#elif defined(_MACOS)
-//    const std::string fileSrc = "";
-#else
-    const std::string fileSrc = GetShaderSourceFromFile(filename);
-#endif
-    if (!fileSrc.empty())
-        return fileSrc;
-
     const GLchar* pSrc = GetShaderSourceFromTable(filename);
     if (pSrc != NULL)
         return pSrc;

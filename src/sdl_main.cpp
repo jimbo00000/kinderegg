@@ -220,10 +220,10 @@ int main(void)
         exit(EXIT_FAILURE);
     }
 
-    g_toy.prog = makeShaderByName("basic");
+    g_toy.prog = makeShaderFromSource("passthru.vert", "image.frag");
     g_toy.uloc_iResolution = glGetUniformLocation(g_toy.prog, "iResolution");
     g_toy.uloc_iGlobalTime = glGetUniformLocation(g_toy.prog, "iGlobalTime");
-    g_toy.progsound = makeShaderByName("basicsound");
+    g_toy.progsound = makeShaderFromSource("passthru.vert", "sound.frag");
     g_toy.uloc_iBlockOffset = glGetUniformLocation(g_toy.progsound, "iBlockOffset");
     g_toy.uloc_iSampleRate = glGetUniformLocation(g_toy.progsound, "iSampleRate");
 

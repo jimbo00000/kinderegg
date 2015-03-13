@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.6 )
 PROJECT( kinderegg )
 
 INCLUDE(cmake_modules/InvokePython.cmake)
-INVOKEPYTHON( "tools/hardcode_shaders.py" )
+INVOKEPYTHON( "tools/hardcode_shadertoy.py" )
 # Python script will dump generated headers to autogen/
 INCLUDE_DIRECTORIES("autogen/")
 

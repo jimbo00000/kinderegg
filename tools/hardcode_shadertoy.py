@@ -1,4 +1,4 @@
-# hardcode_shaders.py
+# hardcode_shadertoy.py
 
 from __future__ import print_function
 import sys
@@ -8,6 +8,55 @@ header = """/* GENERATED FILE - DO NOT EDIT!
  * Created by hardcode_shaders.py.
  *
  */
+"""
+
+passthruVert = """
+#version 330
+in vec4 vPosition;
+void main()
+{
+    gl_Position = vPosition;
+}
+"""
+imageHeader = """
+#version 330
+uniform vec3 iResolution; // viewport resolution (in pixels)
+uniform float iGlobalTime; // shader playback time (in seconds)
+out vec4 glFragColor;
+"""
+imageFooter = """
+void main()
+{
+    vec4 fragcol = vec4(0.);
+    mainImage(fragcol, gl_FragCoord.xy);
+    glFragColor = fragcol;
+}
+"""
+
+soundHeader = """
+#version 330
+// shadertoy.com effect.js line 77
+//#extension GL_OES_standard_derivatives : enable
+uniform vec4      iDate;                 // (year, month, day, time in seconds)
+uniform float     iSampleRate;           // sound sample rate (i.e., 44100)
+uniform float     iBlockOffset;
+//uniform float     iChannelTime[4];
+//uniform vec3      iChannelResolution[4];
+out vec4 glFragColor;
+"""
+soundFooter= """
+void main()
+{
+    float t = iBlockOffset + (gl_FragCoord.x + gl_FragCoord.y*512.0)/44100.0;
+
+    vec2 y = mainSound( t );
+
+    vec2 v  = floor((0.5+0.5*y)*65536.0);
+    vec2 vl =   mod(v,256.0)/255.0;
+    vec2 vh = floor(v/256.0)/255.0;
+    glFragColor = vec4(vl.x,vh.x,vl.y,vh.y);
+}
+
 """
 
 def generateSourceFile():
@@ -29,14 +78,6 @@ def generateSourceFile():
 	if not os.path.isdir(autogenDir):
 		os.makedirs(autogenDir)
 
-	print("hardcode_shaders.py writing the following shaders to",autogenDir,":")
-	shaderList = os.listdir(shaderPath)
-	# filter out some extraneous results: directories, svn files...
-	shaderList = [s for s in shaderList if s != '.svn']
-	shaderList = [s for s in shaderList if not os.path.isdir(shaderPath + s)]
-	for shaderName in shaderList:
-		print("    hardcoding shader:", shaderName)
-
 	tab = "    "
 	decl = "const char* "
 	newline = "\\n"
@@ -45,11 +86,22 @@ def generateSourceFile():
 	with open(sourceFileOut,'w') as outStream:
 		print(header, file=outStream)
 		print("#include <map>", file=outStream)
-		
-		#shaderList = os.listdir(shaderPath)
-		for shaderName in shaderList:
-			file = shaderPath + shaderName
-			lines = open(file).read().splitlines()
+
+		shaderList = [
+			(imageHeader, 'image.frag', imageFooter),
+			(soundHeader, 'sound.frag', soundFooter),
+			(passthruVert, 'passthru.vert', None)
+			]
+		for shaderTup in shaderList:
+			lines = shaderTup[0].splitlines()
+			shaderName = shaderTup[1]
+			if shaderName is not None:
+				file = shaderPath + shaderName
+				try:
+					lines.extend(open(file).read().splitlines())
+					lines.extend(shaderTup[2].splitlines())
+				except:
+					pass
 			varname = shaderName.replace(".","_")
 			print("\n" + decl + varname + " = ", file=outStream)
 			for l in lines:
@@ -64,7 +116,8 @@ def generateSourceFile():
 		print("\n", file=outStream)
 
 		print("void initShaderList() {", file=outStream)
-		for fname in shaderList:
+		for shaderTup in shaderList:
+			fname = shaderTup[1]
 			varname = fname.replace(".","_")
 			print(tab + mapvar + "[\"" + fname + "\"] = " + varname + ";", file=outStream)
 		print("}", file=outStream)
