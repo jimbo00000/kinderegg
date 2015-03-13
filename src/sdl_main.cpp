@@ -128,55 +128,37 @@ void SDLCALL fillerup(void *unused, Uint8 * stream, int len)
 
 void play_audio()
 {
-    // init buffer
-    wave.soundlen = 128*1024;
-    //wav_spec.samples = samps;
-    wave.sound = new Uint8[wave.soundlen];
-    // Fill with noise
-    for (int i=0; i<wave.soundlen/2; ++i)
-    {
-        wave.sound[i] = rand() % 255;
-    }
-
     wave.spec.freq = 44100;
     wave.spec.format = AUDIO_U8; //AUDIO_S16LSB;
     wave.spec.channels = 2;
     wave.spec.callback = fillerup;
 
-	// shadertoy effect.js 135
-	//this.mSampleRate = 44100;
-	//this.mPlayTime = 60;
-	//this.mPlaySamples = this.mPlayTime*this.mSampleRate;
-	//this.mBuffer = wa.createBuffer(2, this.mPlaySamples, this.mSampleRate);
-	//var l2   = gl.getUniformLocation( this.mProgram, "iBlockOffset" );
+    const int mPlayTime = 60; // Shadertoy gives 60 seconds of audio
+    wave.soundlen = mPlayTime * wave.spec.freq;
+    wave.sound = new Uint8[2*wave.soundlen];
+    glViewport(0,0,512,512);
+    glUseProgram(g_toy.progsound);
 
-	// render effect.js 983
-#if 0
-	// bufL: Float32Array[2646000]
-	// numBlocks: 10.09368896484375
-	var bufL = this.mBuffer.getChannelData(0); // Float32Array
-	var bufR = this.mBuffer.getChannelData(1); // Float32Array
-	var numBlocks = this.mPlaySamples / this.mTmpBufferSamples;
-	for (var j = 0; j<numBlocks; j++)
-	{
-		var off = j*this.mTmpBufferSamples; // mTmpBufferSamples: 262144
+    unsigned char mData[512*512*4];
+    int mTmpBufferSamples = 262144;
+    int mPlaySamples = wave.soundlen;
+    int numBlocks = mPlaySamples / mTmpBufferSamples;
+    for (int j=0; j<numBlocks; ++j)
+    {
+        int off = j * mTmpBufferSamples;
+        if (g_toy.uloc_iBlockOffset > -1) glUniform1f(g_toy.uloc_iBlockOffset, (float)off / (float)wave.spec.freq);
 
-		gl.uniform1f(l2, off / this.mSampleRate);
-		gl.drawArrays(gl.TRIANGLES, 0, 6);
-		// mTextureDimensions: 512
-		gl.readPixels(0, 0, this.mTextureDimensions, this.mTextureDimensions, gl.RGBA, gl.UNSIGNED_BYTE, this.mData);
-
-		for (var i = 0; i<this.mTmpBufferSamples; i++)
-		{
-			bufL[off + i] = -1.0 + 2.0*(this.mData[4 * i + 0] + 256.0*this.mData[4 * i + 1]) / 65535.0;
-			bufR[off + i] = -1.0 + 2.0*(this.mData[4 * i + 2] + 256.0*this.mData[4 * i + 3]) / 65535.0;
-		}
-	}
-
-	gl.disableVertexAttribArray(l1);
-	gl.useProgram(null);
-	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-#endif
+        glRecti(-1,-1,1,1);
+        // mData: Uint8Array[1048576]
+        glReadPixels(0,0,512,512, GL_RGBA, GL_UNSIGNED_BYTE, mData);
+        for (int i = 0; i<mTmpBufferSamples; ++i)
+        {
+            const float aL = -1.0f + 2.0f*((float)mData[4 * i + 0] + 256.0f*(float)mData[4 * i + 1]) / 65535.0f;
+            const float aR = -1.0f + 2.0f*((float)mData[4 * i + 2] + 256.0f*(float)mData[4 * i + 3]) / 65535.0f;
+            wave.sound[2*(off + i)  ] = (unsigned char)(.5f*(1.f+aL) * 255.f);
+            wave.sound[2*(off + i)+1] = (unsigned char)(.5f*(1.f+aR) * 255.f);
+        }
+    }
 
     if (SDL_OpenAudio(&wave.spec, NULL) < 0)
     {
@@ -240,14 +222,12 @@ int main(void)
     g_toy.prog = makeShaderByName("basic");
     g_toy.uloc_iResolution = glGetUniformLocation(g_toy.prog, "iResolution");
     g_toy.uloc_iGlobalTime = glGetUniformLocation(g_toy.prog, "iGlobalTime");
-	g_toy.progsound = makeShaderByName("basicsound");
-	g_toy.uloc_iBlockOffset = glGetUniformLocation(g_toy.progsound, "iBlockOffset");
-	g_toy.uloc_iSampleRate = glGetUniformLocation(g_toy.progsound, "iSampleRate");
-
-	//var l2   = gl.getUniformLocation( this.mProgram, "" );
-
+    g_toy.progsound = makeShaderByName("basicsound");
+    g_toy.uloc_iBlockOffset = glGetUniformLocation(g_toy.progsound, "iBlockOffset");
+    g_toy.uloc_iSampleRate = glGetUniformLocation(g_toy.progsound, "iSampleRate");
 
     play_audio();
+    glViewport(0,0, winw, winh);
 
     int quit = 0;
     while (quit == 0)
