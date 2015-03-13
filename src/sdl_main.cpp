@@ -20,11 +20,11 @@ int winh = 600;
 
 struct Shadertoy {
     GLuint prog;
-	GLuint progsound;
-	GLint uloc_iResolution;
-	GLint uloc_iGlobalTime;
-	GLint uloc_iBlockOffset;
-	GLint uloc_iSampleRate;
+    GLuint progsound;
+    GLint uloc_iResolution;
+    GLint uloc_iGlobalTime;
+    GLint uloc_iBlockOffset;
+    GLint uloc_iSampleRate;
 };
 
 Shadertoy g_toy;
@@ -139,7 +139,7 @@ void play_audio()
     glViewport(0,0,512,512);
     glUseProgram(g_toy.progsound);
 
-    unsigned char mData[512*512*4];
+    unsigned char* mData = new unsigned char[512*512*4];
     int mTmpBufferSamples = 262144;
     int mPlaySamples = wave.soundlen;
     int numBlocks = mPlaySamples / mTmpBufferSamples;
@@ -159,6 +159,7 @@ void play_audio()
             wave.sound[2*(off + i)+1] = (unsigned char)(.5f*(1.f+aR) * 255.f);
         }
     }
+    delete [] mData;
 
     if (SDL_OpenAudio(&wave.spec, NULL) < 0)
     {
