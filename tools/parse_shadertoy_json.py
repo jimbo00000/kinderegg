@@ -4,6 +4,7 @@ from __future__ import print_function
 import json
 import os
 import sys
+import requests
 from PIL import Image
 
 def dumpReadmeFile(info):
@@ -91,8 +92,11 @@ def queryShadertoy(id):
 	apikey = "xxxxxx"
 	with open('apikey.txt','r') as keystr:
 		apikey = keystr.read()
-	print(apikey)
-	# https://www.shadertoy.com/api/v1/shaders/shaderID?key=appkey
+	req = 'https://www.shadertoy.com/api/v1/shaders/{0}?key={1}'
+	req = req.format(id, apikey)
+	r = requests.get(req)
+	print(r)
+	print(r.json())
 
 
 #
