@@ -28,20 +28,30 @@ def dumpTextureHeader(renderpass):
 	readmeFileOut = 'g_textures.h'
 	texDir = os.path.join('..', 'textures')
 	with open(readmeFileOut,'w') as outStream:
-		print(textureHeader,file=outStream)
+		print(textureHeader, file=outStream)
 		pass_id = 0
 		for r in renderpass:
 			# Pull out textures
+			tex_id = 0
 			for t in r['inputs']:
 				texfile = os.path.basename(t['src'])
 				print("    tex" + str(t['channel']) + ": " + texfile, end='')
 				img = Image.open(os.path.join(texDir,texfile))
 				px = img.load()
+
+				arrayname = 'tex' + str(pass_id) + str(tex_id)
+				vardecl = 'int {0} = {1};'
+				print(vardecl.format(arrayname+'w', img.size[0]), file=outStream)
+				print(vardecl.format(arrayname+'h', img.size[1]), file=outStream)
+
 				print("    size: ", img.size, end='')
 				for i in range(5):
 					print(" " + str(px[i,0]), end='')
 				print("")
+
 				# TODO: Save to header
+				tex_id += 1
+			pass_id += 1
 
 
 def parseJsonFile(jsonfile):
