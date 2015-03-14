@@ -46,13 +46,17 @@ def dumpTextureHeader(renderpass):
 				arrdecl = 'char {0}[] = '
 				print(arrdecl.format(arrayname), file=outStream)
 				print('{', file=outStream)
-				for j in range(10):#img.size[1]):
-					for i in range(10):#img.size[0]):
-						print(" " + str(px[i,j]) + ",", end='', file=outStream)
+				for j in range(img.size[1]):
+					for i in range(img.size[0]):
+						p = px[i,j]
+						if isinstance(p,int):
+							print(" " + str(p) + ",", end='', file=outStream)
+						elif isinstance(p,tuple):
+							for x in p:
+								print(" " + str(x) + ",", end='', file=outStream)
 				print('}', file=outStream)
 				print('', file=outStream)
 
-				# TODO: Save to header
 				tex_id += 1
 			pass_id += 1
 
