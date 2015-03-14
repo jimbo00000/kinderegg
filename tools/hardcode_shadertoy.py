@@ -22,6 +22,9 @@ imageHeader = """
 #version 330
 uniform vec3 iResolution; // viewport resolution (in pixels)
 uniform float iGlobalTime; // shader playback time (in seconds)
+//uniform vec3      iChannelResolution[4]; // channel resolution (in pixels)
+uniform vec4      iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
+uniform vec4      iDate;                 // (year, month, day, time in seconds)
 out vec4 glFragColor;
 """
 imageFooter = """
