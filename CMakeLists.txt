@@ -7,7 +7,7 @@ INVOKEPYTHON( "tools/hardcode_shadertoy.py" )
 INCLUDE_DIRECTORIES("autogen/")
 
 # GLFW, SDL, SFML
-SET( GL_FRAMEWORK "GLFW" CACHE STRING "Which OpenGL windowing framework to use" )
+SET( GL_FRAMEWORK "SDL" CACHE STRING "Which OpenGL windowing framework to use" )
 
 SET( USE_CORE_CONTEXT TRUE CACHE BOOL "Use Core Context" )
 IF( USE_CORE_CONTEXT )
