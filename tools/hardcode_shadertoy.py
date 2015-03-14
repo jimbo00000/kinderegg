@@ -11,7 +11,7 @@ header = """/* GENERATED FILE - DO NOT EDIT!
 """
 
 passthruVert = """
-#version 330
+#version 120
 in vec4 vPosition;
 void main()
 {
@@ -19,7 +19,7 @@ void main()
 }
 """
 imageHeader = """
-#version 330
+#version 120
 uniform vec3 iResolution; // viewport resolution (in pixels)
 uniform float iGlobalTime; // shader playback time (in seconds)
 //uniform vec3      iChannelResolution[4]; // channel resolution (in pixels)
@@ -37,7 +37,7 @@ void main()
 """
 
 soundHeader = """
-#version 330
+#version 120
 // shadertoy.com effect.js line 77
 //#extension GL_OES_standard_derivatives : enable
 uniform vec4      iDate;                 // (year, month, day, time in seconds)
