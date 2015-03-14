@@ -16,6 +16,7 @@ print("Author: " + info['username'])
 print("Description: " + info['description'])
 print("Tags: " + ', '.join(info['tags']))
 
+texDir = os.path.join('..', 'textures')
 renderpass = j['Shader']['renderpass']
 for r in renderpass:
 	print(r['type'])
@@ -23,7 +24,7 @@ for r in renderpass:
 	for t in r['inputs']:
 		texfile = os.path.basename(t['src'])
 		print("    tex" + str(t['channel']) + ": " + texfile, end='')
-		img = Image.open(texfile)
+		img = Image.open(os.path.join(texDir,texfile))
 		px = img.load()
 		print("    size: ", img.size, end='')
 		for i in range(5):
