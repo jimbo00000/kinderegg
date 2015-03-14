@@ -84,15 +84,28 @@ def parseJson(j):
 	dumpShaderFiles(renderpass)
 
 
+def queryShadertoy(id):
+	"""Send a request to Shaderoy.com for the given shadertoy id.
+	Store your API key in the filename below.
+	"""
+	apikey = "xxxxxx"
+	with open('apikey.txt','r') as keystr:
+		apikey = keystr.read()
+	print(apikey)
+	# https://www.shadertoy.com/api/v1/shaders/shaderID?key=appkey
+
+
 #
 # Main: enter here
 #
 def main(argv=None):
-	if True:
+	if False:
 		#jsonfile = "Mll3W2.txt"
 		jsonfile = "ldXXDj.txt"
 		j = json.loads(open(jsonfile).read())
 		parseJson(j)
+	else:
+		queryShadertoy('ldXXDj')
 
 
 if __name__ == "__main__":
