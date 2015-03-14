@@ -96,7 +96,11 @@ def queryShadertoy(id):
 	req = req.format(id, apikey)
 	r = requests.get(req)
 	print(r)
-	print(r.json())
+	j = r.json()
+	if 'Error' in j:
+		print(j['Error'])
+	else:
+		print('Success')
 
 
 #
