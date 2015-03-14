@@ -6,15 +6,25 @@ import os
 import sys
 from PIL import Image
 
+def dumpReadmeFile(info):
+	readmeFileOut = 'README.txt'
+	with open(readmeFileOut,'w') as outStream:
+		print("Title: " + info['name'], file=outStream)
+		print("Author: " + info['username'], file=outStream)
+		print('',file=outStream)
+		print("Tags: " + ', '.join(info['tags']), file=outStream)
+		print('',file=outStream)
+		print("Description: " + info['description'], file=outStream)
+		print('',file=outStream)
+		print('Generated from https://www.shadertoy.com/view/{0} by kinderegg.'.format(info['id']),file=outStream)
+
+
 def parseJsonFile(jsonfile):
 	j = json.loads(open(jsonfile).read())
 
 	#print(json.dumps(j,indent=1))
 	info = j['Shader']['info']
-	print("Title: " + info['name'])
-	print("Author: " + info['username'])
-	print("Description: " + info['description'])
-	print("Tags: " + ', '.join(info['tags']))
+	dumpReadmeFile(info)
 
 	texDir = os.path.join('..', 'textures')
 	renderpass = j['Shader']['renderpass']
