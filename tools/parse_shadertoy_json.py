@@ -104,13 +104,23 @@ def queryShadertoy(id):
 		os.mkdir(id)
 		info = j['Shader']['info']
 		dumpReadmeFile(info, id)
+		renderpass = j['Shader']['renderpass']
+		dumpShaderFiles(renderpass)
 
 
 #
 # Main: enter here
 #
 def main(argv=None):
+	# https://www.shadertoy.com/api/v1/shaders/query/string?key=appkey
 	# ldXXDj
+	# 4dfXWj
+	# lssXWS
+	# XdfXWS
+	# lsfXDl
+	# 4df3D8
+	# 4dl3zn
+	# MdB3Rc
 	if len(sys.argv) > 1:
 		queryShadertoy(sys.argv[1])
 
