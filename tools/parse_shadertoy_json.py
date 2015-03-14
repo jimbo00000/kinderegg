@@ -61,28 +61,36 @@ def dumpTextureHeader(renderpass):
 			pass_id += 1
 
 
+def dumpShaderFiles(renderpass):
+	"""Save shader source to ../shaders/ for hardcoding by CMake."""
+	shaderDir = os.path.join('..', 'shaders')
+	for r in renderpass:
+		shfile = r['type'] + ".frag"
+		src = r['code']
+		# TODO some retroactive refactoring
+		#src = src.replace("main", "mainImage")
+		#src = src.replace("gl_FragColor", "glFragColor")
+		with open(os.path.join(shaderDir, shfile),'w') as outStream:
+			print(src, file=outStream)
+		print(shfile + ": " + str(len(src)) + " bytes written.")
+
+
 def parseJsonFile(jsonfile):
 	j = json.loads(open(jsonfile).read())
-
 	#print(json.dumps(j,indent=1))
 	info = j['Shader']['info']
 	dumpReadmeFile(info)
-
 	renderpass = j['Shader']['renderpass']
-	dumpTextureHeader(renderpass)
+	#dumpTextureHeader(renderpass)
+	dumpShaderFiles(renderpass)
 
-	for r in renderpass:
-		print(r['type'])
-		print("    code: " + str(len(r['code'])) + " bytes")
-		#print(r['code'])
-		# TODO: Save to header
 
 #
 # Main: enter here
 #
 def main(argv=None):
-	#jsonfile = "4lX3RB.txt"
-	jsonfile = "ldXXDj.txt"
+	jsonfile = "Mll3W2.txt"
+	#jsonfile = "ldXXDj.txt"
 	parseJsonFile(jsonfile)
 
 
