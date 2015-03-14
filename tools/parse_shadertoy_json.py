@@ -7,8 +7,8 @@ import sys
 import requests
 from PIL import Image
 
-def dumpReadmeFile(info):
-	readmeFileOut = 'README.txt'
+def dumpReadmeFile(info, id):
+	readmeFileOut = os.path.join(id, 'README.txt')
 	with open(readmeFileOut,'w') as outStream:
 		print("Title: " + info['name'], file=outStream)
 		print("Author: " + info['username'], file=outStream)
@@ -101,6 +101,9 @@ def queryShadertoy(id):
 		print(j['Error'])
 	else:
 		print('Success')
+		os.mkdir(id)
+		info = j['Shader']['info']
+		dumpReadmeFile(info, id)
 
 
 #
