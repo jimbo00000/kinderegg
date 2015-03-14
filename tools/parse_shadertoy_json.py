@@ -103,13 +103,9 @@ def queryShadertoy(id):
 # Main: enter here
 #
 def main(argv=None):
-	if False:
-		#jsonfile = "Mll3W2.txt"
-		jsonfile = "ldXXDj.txt"
-		j = json.loads(open(jsonfile).read())
-		parseJson(j)
-	else:
-		queryShadertoy('ldXXDj')
+	# ldXXDj
+	if len(sys.argv) > 1:
+		queryShadertoy(sys.argv[1])
 
 
 if __name__ == "__main__":
