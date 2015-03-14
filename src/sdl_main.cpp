@@ -23,6 +23,8 @@ struct Shadertoy {
     GLuint progsound;
     GLint uloc_iResolution;
     GLint uloc_iGlobalTime;
+    GLint uloc_iMouse;
+    GLint uloc_iDate;
     GLint uloc_iBlockOffset;
     GLint uloc_iSampleRate;
 };
@@ -90,6 +92,9 @@ void display()
     glUseProgram(g_toy.prog);
     if (g_toy.uloc_iResolution > -1) glUniform3f(g_toy.uloc_iResolution, (float)winw, (float)winh, 1.f);
     if (g_toy.uloc_iGlobalTime > -1) glUniform1f(g_toy.uloc_iGlobalTime, g_timer.seconds());
+    if (g_toy.uloc_iMouse > -1) glUniform4f(g_toy.uloc_iMouse, 0.f, 0.f, 0.f, 0.f);
+    if (g_toy.uloc_iDate > -1) glUniform4f(g_toy.uloc_iDate, 2015.f, 3.f, 6.f, 6.f);
+
     glRecti(-1,-1,1,1);
 }
 
@@ -223,6 +228,9 @@ int main(void)
     g_toy.prog = makeShaderFromSource("passthru.vert", "image.frag");
     g_toy.uloc_iResolution = glGetUniformLocation(g_toy.prog, "iResolution");
     g_toy.uloc_iGlobalTime = glGetUniformLocation(g_toy.prog, "iGlobalTime");
+    g_toy.uloc_iMouse = glGetUniformLocation(g_toy.prog, "iMouse");
+    g_toy.uloc_iDate = glGetUniformLocation(g_toy.prog, "iDate");
+
     g_toy.progsound = makeShaderFromSource("passthru.vert", "sound.frag");
     g_toy.uloc_iBlockOffset = glGetUniformLocation(g_toy.progsound, "iBlockOffset");
     g_toy.uloc_iSampleRate = glGetUniformLocation(g_toy.progsound, "iSampleRate");
