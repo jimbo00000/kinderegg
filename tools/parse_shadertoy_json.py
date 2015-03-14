@@ -75,8 +75,7 @@ def dumpShaderFiles(renderpass):
 		print(shfile + ": " + str(len(src)) + " bytes written.")
 
 
-def parseJsonFile(jsonfile):
-	j = json.loads(open(jsonfile).read())
+def parseJson(j):
 	#print(json.dumps(j,indent=1))
 	info = j['Shader']['info']
 	dumpReadmeFile(info)
@@ -89,9 +88,11 @@ def parseJsonFile(jsonfile):
 # Main: enter here
 #
 def main(argv=None):
-	jsonfile = "Mll3W2.txt"
-	#jsonfile = "ldXXDj.txt"
-	parseJsonFile(jsonfile)
+	if True:
+		#jsonfile = "Mll3W2.txt"
+		jsonfile = "ldXXDj.txt"
+		j = json.loads(open(jsonfile).read())
+		parseJson(j)
 
 
 if __name__ == "__main__":
