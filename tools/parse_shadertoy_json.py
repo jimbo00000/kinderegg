@@ -86,7 +86,7 @@ def parseJson(j):
 	dumpShaderFiles(renderpass)
 
 
-def queryShadertoy(id):
+def getShadertoyJson(id):
 	"""Send a request to Shaderoy.com for the given shadertoy id.
 	Store your API key in the filename below.
 	"""
@@ -97,22 +97,14 @@ def queryShadertoy(id):
 	req = req.format(id, apikey)
 	r = requests.get(req)
 	print(r)
-	j = r.json()
-	if 'Error' in j:
-		print(j['Error'])
-	else:
-		print('Success')
-		info = j['Shader']['info']
-		dumpReadmeFile(info, id)
-		renderpass = j['Shader']['renderpass']
-		dumpShaderFiles(renderpass)
+	return r.json()
 
 
 def invokeBuild(id):
 	"""Invoke CMake which in turn invokes designated compiler to build the executable."""
 	cmakepath = '"C:/Program Files (x86)/CMake/bin/cmake"'
-	if not os.path.exists(cmakepath):
-		cmakepath = '"C:/Program Files (x86)/CMake 2.8/bin/cmake"'
+	#if not os.path.exists(cmakepath):
+	#	makepath = '"C:/Program Files (x86)/CMake 2.8/bin/cmake"'
 	slnpath = '../build'
 	os.chdir(slnpath)
 	cmds = [
@@ -141,7 +133,7 @@ def invokeBuild(id):
 #
 def main(argv=None):
 	# https://www.shadertoy.com/api/v1/shaders/query/string?key=appkey
-	# ldXXDj
+	# ldXXDj - Pirates by iq
 	# 4dfXWj
 	# lssXWS
 	# XdfXWS
@@ -157,8 +149,17 @@ def main(argv=None):
 	id = sys.argv[1]
 	if not os.path.exists(id):
 		os.mkdir(id)
-	queryShadertoy(id)
-	invokeBuild(id)
+	j = getShadertoyJson(id)
+	if 'Error' in j:
+		print(j['Error'])
+	else:
+		print('Success')
+		info = j['Shader']['info']
+		dumpReadmeFile(info, id)
+		renderpass = j['Shader']['renderpass']
+		dumpShaderFiles(renderpass)
+		invokeBuild(id)
+		print(info['name'] + " by " + info['username'])
 
 
 if __name__ == "__main__":
