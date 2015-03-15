@@ -154,7 +154,8 @@ def main(argv=None):
 		print("Usage: requires one argument(shadertoy id)")
 		quit()
 	id = sys.argv[1]
-	os.mkdir(id)
+	if not os.path.exists(id):
+		os.mkdir(id)
 	queryShadertoy(id)
 	invokeBuild(id)
 
