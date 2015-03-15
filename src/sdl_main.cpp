@@ -22,6 +22,12 @@ struct renderpass {
     GLuint prog;
     GLint uloc_iResolution;
     GLint uloc_iGlobalTime;
+    GLint uloc_iChannelResolution;
+    //iChannelTime not implemented
+    GLint uloc_iChannel0;
+    GLint uloc_iChannel1;
+    GLint uloc_iChannel2;
+    GLint uloc_iChannel3;
     GLint uloc_iMouse;
     GLint uloc_iDate;
     GLint uloc_iBlockOffset;
