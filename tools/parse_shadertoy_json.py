@@ -4,6 +4,7 @@ from __future__ import print_function
 import json
 import os
 import sys
+import shutil
 import requests
 from PIL import Image
 
@@ -109,20 +110,22 @@ def queryShadertoy(id):
 
 
 def invokeBuild():
-	"""Invoke CMake and VS2012 to build the executable."""
+	"""Invoke CMake which in turn invokes designated compiler to build the executable."""
 	cmakepath = '"C:/Program Files (x86)/CMake/bin/cmake"'
-	vs2012path = 'C:/Program Files (x86)/Microsoft Visual Studio 12.0'
-	msbuildpath = 'C:/Windows/Microsoft.NET/Framework/v4.0.30319/msbuild.exe'
-	# BuildConsole.exe MySln.sln /build /cfg="Release"
 	slnpath = '../build'
 	os.chdir(slnpath)
 	cmds = [
 		cmakepath + ' --build . --config Release',
 		'dir',]
-		#msbuildpath + ' kinderegg.vcxproj /p:Configuration=Debug']
 	for c in cmds:
 		print(c)
 		os.system(c)
+	sdlpath = 'C:/lib/SDL2-2.0.3'
+	sdllibpath = 'lib/x86'
+	sdldllname = 'SDL2.dll'
+	shutil.copyfile(
+		os.path.join(sdlpath, sdllibpath, sdldllname),
+		os.path.join('.', sdldllname))
 
 
 #
