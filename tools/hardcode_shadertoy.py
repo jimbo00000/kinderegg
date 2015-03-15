@@ -25,14 +25,22 @@ uniform float iGlobalTime; // shader playback time (in seconds)
 //uniform vec3      iChannelResolution[4]; // channel resolution (in pixels)
 uniform vec4      iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
 uniform vec4      iDate;                 // (year, month, day, time in seconds)
+
+#ifdef OUT_SUPPORTED
 out vec4 glFragColor;
+#endif
 """
 imageFooter = """
 void main()
 {
     vec4 fragcol = vec4(0.);
     mainImage(fragcol, gl_FragCoord.xy);
-    glFragColor = fragcol;
+#ifdef OUT_SUPPORTED
+    glFragColor
+#else
+    gl_FragColor
+#endif
+    = fragcol;
 }
 """
 
@@ -45,7 +53,10 @@ uniform float     iSampleRate;           // sound sample rate (i.e., 44100)
 uniform float     iBlockOffset;
 //uniform float     iChannelTime[4];
 //uniform vec3      iChannelResolution[4];
+
+#ifdef OUT_SUPPORTED
 out vec4 glFragColor;
+#endif
 """
 soundFooter= """
 void main()
@@ -57,7 +68,12 @@ void main()
     vec2 v  = floor((0.5+0.5*y)*65536.0);
     vec2 vl =   mod(v,256.0)/255.0;
     vec2 vh = floor(v/256.0)/255.0;
-    glFragColor = vec4(vl.x,vh.x,vl.y,vh.y);
+#ifdef OUT_SUPPORTED
+    glFragColor
+#else
+    gl_FragColor
+#endif
+     = vec4(vl.x,vh.x,vl.y,vh.y);
 }
 
 """
