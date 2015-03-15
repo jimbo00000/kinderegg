@@ -8,7 +8,7 @@ Packages Shadertoys into desktop executables.
 
 ## Usage
 
-Pick out a favorite shadertoy and remember its 6-character id.
+Pick out a favorite shadertoy and remember its 6-character id. Save your Shadertoy API key in the file **tools/apikey.txt**.
 
     cd tools
     python parse_shadertoy_json.py <id>
