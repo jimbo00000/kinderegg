@@ -241,6 +241,11 @@ int main(void)
     r.prog = makeShaderFromSource("passthru.vert", "image.frag");
     r.uloc_iResolution = glGetUniformLocation(r.prog, "iResolution");
     r.uloc_iGlobalTime = glGetUniformLocation(r.prog, "iGlobalTime");
+    r.uloc_iChannelResolution = glGetUniformLocation(r.prog, "iChannelResolution");
+    r.uloc_iChannel0 = glGetUniformLocation(r.prog, "iChannel0");
+    r.uloc_iChannel1 = glGetUniformLocation(r.prog, "iChannel1");
+    r.uloc_iChannel2 = glGetUniformLocation(r.prog, "iChannel2");
+    r.uloc_iChannel3 = glGetUniformLocation(r.prog, "iChannel3");
     r.uloc_iMouse = glGetUniformLocation(r.prog, "iMouse");
     r.uloc_iDate = glGetUniformLocation(r.prog, "iDate");
 
