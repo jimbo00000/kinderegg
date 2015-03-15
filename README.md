@@ -24,6 +24,12 @@ The script will:
 
 Once finished, there should be a complete, running production in the new directory ready for submission.
 
+## Working Examples
+
+ - [lssXWS]() Music - Harry Potter by iq
+ - [lsfXDl]() Whitney wheel by lost4468
+ - [4tfGRM]() Shulgins' Eye by jimbo00000
+
 ## Features
  - Image rendering  
  - Audio  

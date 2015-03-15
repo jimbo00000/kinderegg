@@ -138,11 +138,9 @@ def main(argv=None):
 	# 4dfXWj - Music Mario by iq
 	# XdfXWS - Music - Pulsating by iq
 
-	# lsfXDl
 	# 4df3D8
 	# 4dl3zn - Bubbles by iq
 	# MdB3Rc
-	# 4tfGRM
 	# lts3zn - cardboard waves
 	if len(sys.argv) <= 1:
 		print("Usage: requires one argument(shadertoy id)")
