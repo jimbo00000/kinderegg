@@ -8,8 +8,8 @@ import shutil
 import requests
 from PIL import Image
 
-def dumpReadmeFile(info, id):
-	readmeFileOut = os.path.join(id, 'README.txt')
+def dumpReadmeFile(info, dir):
+	readmeFileOut = os.path.join(dir, 'README.txt')
 	with open(readmeFileOut,'w') as outStream:
 		print("Title: " + info['name'], file=outStream)
 		print("Author: " + info['username'], file=outStream)
@@ -100,7 +100,7 @@ def getShadertoyJson(id):
 	return r.json()
 
 
-def invokeBuild(id):
+def invokeBuild(dir):
 	"""Invoke CMake which in turn invokes designated compiler to build the executable."""
 	cmakepath = '"C:/Program Files (x86)/CMake/bin/cmake"'
 	#if not os.path.exists(cmakepath):
@@ -118,14 +118,14 @@ def invokeBuild(id):
 	keexe = "kinderegg.exe" # specified in CMakeLists.txt
 	shutil.copyfile(
 		os.path.join(kepath, keexe),
-		os.path.join('..', 'tools', id, keexe))
+		os.path.join('..', 'tools', dir, keexe))
 	# Copy SDL2.dll to output dir
 	sdlpath = 'C:/lib/SDL2-2.0.3'
 	sdllibpath = 'lib/x86'
 	sdldllname = 'SDL2.dll'
 	shutil.copyfile(
 		os.path.join(sdlpath, sdllibpath, sdldllname),
-		os.path.join('..', 'tools', id, sdldllname))
+		os.path.join('..', 'tools', dir, sdldllname))
 
 
 #
@@ -137,9 +137,10 @@ def main(argv=None):
 	# ldXXDj - Pirates by iq
 	# 4dfXWj - Music Mario by iq
 	# XdfXWS - Music - Pulsating by iq
+	
 	# lsfXDl
 	# 4df3D8
-	# 4dl3zn
+	# 4dl3zn - Bubbles by iq
 	# MdB3Rc
 	# 4tfGRM
 	# lts3zn - cardboard waves
