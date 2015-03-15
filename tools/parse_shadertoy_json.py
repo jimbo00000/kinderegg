@@ -137,7 +137,7 @@ def main(argv=None):
 	# ldXXDj - Pirates by iq
 	# 4dfXWj - Music Mario by iq
 	# XdfXWS - Music - Pulsating by iq
-	
+
 	# lsfXDl
 	# 4df3D8
 	# 4dl3zn - Bubbles by iq
@@ -148,20 +148,22 @@ def main(argv=None):
 		print("Usage: requires one argument(shadertoy id)")
 		quit()
 	id = sys.argv[1]
-	if not os.path.exists(id):
-		os.mkdir(id)
 	j = getShadertoyJson(id)
 	if 'Error' in j:
 		print(j['Error'])
 	else:
 		print('Success')
 		info = j['Shader']['info']
-		dumpReadmeFile(info, id)
+		name = info['name']
+		dir = name
+		if not os.path.exists(dir):
+			os.mkdir(dir)
+		dumpReadmeFile(info, dir)
 		renderpass = j['Shader']['renderpass']
 		dumpShaderFiles(renderpass)
-		invokeBuild(id)
+		invokeBuild(dir)
 		print(id)
-		print(info['name'] + " by " + info['username'])
+		print(name + " by " + info['username'])
 
 
 if __name__ == "__main__":
