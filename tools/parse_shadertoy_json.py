@@ -108,6 +108,23 @@ def queryShadertoy(id):
 		dumpShaderFiles(renderpass)
 
 
+def invokeBuild():
+	"""Invoke CMake and VS2012 to build the executable."""
+	cmakepath = '"C:/Program Files (x86)/CMake/bin/cmake"'
+	vs2012path = 'C:/Program Files (x86)/Microsoft Visual Studio 12.0'
+	msbuildpath = 'C:/Windows/Microsoft.NET/Framework/v4.0.30319/msbuild.exe'
+	# BuildConsole.exe MySln.sln /build /cfg="Release"
+	slnpath = '../build'
+	os.chdir(slnpath)
+	cmds = [
+		cmakepath + ' --build . --config Release',
+		'dir',]
+		#msbuildpath + ' kinderegg.vcxproj /p:Configuration=Debug']
+	for c in cmds:
+		print(c)
+		os.system(c)
+
+
 #
 # Main: enter here
 #
@@ -121,8 +138,13 @@ def main(argv=None):
 	# 4df3D8
 	# 4dl3zn
 	# MdB3Rc
-	if len(sys.argv) > 1:
-		queryShadertoy(sys.argv[1])
+	# 4tfGRM
+	# lts3zn
+	if len(sys.argv) <= 1:
+		print("Usage: requires one argument(shadertoy id)")
+		quit()
+	#queryShadertoy(sys.argv[1])
+	invokeBuild()
 
 
 if __name__ == "__main__":
