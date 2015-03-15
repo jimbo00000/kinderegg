@@ -111,12 +111,13 @@ def queryShadertoy(id):
 def invokeBuild(id):
 	"""Invoke CMake which in turn invokes designated compiler to build the executable."""
 	cmakepath = '"C:/Program Files (x86)/CMake/bin/cmake"'
+	if not os.path.exists(cmakepath):
+		cmakepath = '"C:/Program Files (x86)/CMake 2.8/bin/cmake"'
 	slnpath = '../build'
 	os.chdir(slnpath)
 	cmds = [
 		cmakepath + ' ..',
-		cmakepath + ' --build . --config Release --clean-first',
-		'dir',]
+		cmakepath + ' --build . --config Release --clean-first',]
 	for c in cmds:
 		print(c)
 		os.system(c)
