@@ -133,16 +133,16 @@ def invokeBuild(id):
 #
 def main(argv=None):
 	# https://www.shadertoy.com/api/v1/shaders/query/string?key=appkey
+	# Broken examples:
 	# ldXXDj - Pirates by iq
-	# 4dfXWj
-	# lssXWS
-	# XdfXWS
+	# 4dfXWj - Music Mario by iq
+	# XdfXWS - Music - Pulsating by iq
 	# lsfXDl
 	# 4df3D8
 	# 4dl3zn
 	# MdB3Rc
 	# 4tfGRM
-	# lts3zn
+	# lts3zn - cardboard waves
 	if len(sys.argv) <= 1:
 		print("Usage: requires one argument(shadertoy id)")
 		quit()
@@ -159,6 +159,7 @@ def main(argv=None):
 		renderpass = j['Shader']['renderpass']
 		dumpShaderFiles(renderpass)
 		invokeBuild(id)
+		print(id)
 		print(info['name'] + " by " + info['username'])
 
 
