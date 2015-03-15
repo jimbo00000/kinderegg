@@ -109,7 +109,7 @@ def queryShadertoy(id):
 		dumpShaderFiles(renderpass)
 
 
-def invokeBuild():
+def invokeBuild(id):
 	"""Invoke CMake which in turn invokes designated compiler to build the executable."""
 	cmakepath = '"C:/Program Files (x86)/CMake/bin/cmake"'
 	slnpath = '../build'
@@ -120,12 +120,19 @@ def invokeBuild():
 	for c in cmds:
 		print(c)
 		os.system(c)
+	# Copy built exe to output dir
+	kepath = "Release"
+	keexe = "kinderegg.exe" # specified in CMakeLists.txt
+	shutil.copyfile(
+		os.path.join(kepath, keexe),
+		os.path.join('..', 'tools', id, keexe))
+	# Copy SDL2.dll to output dir
 	sdlpath = 'C:/lib/SDL2-2.0.3'
 	sdllibpath = 'lib/x86'
 	sdldllname = 'SDL2.dll'
 	shutil.copyfile(
 		os.path.join(sdlpath, sdllibpath, sdldllname),
-		os.path.join('.', sdldllname))
+		os.path.join('..', 'tools', id, sdldllname))
 
 
 #
@@ -146,8 +153,9 @@ def main(argv=None):
 	if len(sys.argv) <= 1:
 		print("Usage: requires one argument(shadertoy id)")
 		quit()
-	#queryShadertoy(sys.argv[1])
-	invokeBuild()
+	id = sys.argv[1]
+	queryShadertoy(id)
+	invokeBuild(id)
 
 
 if __name__ == "__main__":
