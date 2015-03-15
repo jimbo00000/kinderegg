@@ -24,6 +24,11 @@ The script will:
 
 Once finished, there should be a complete, running production in the new directory ready for submission.
 
+## Features
+ - Image rendering  
+ - Audio  
+ - Textures(todo)
+
 ## Shortcomings
 Some features are not supported:  
 
@@ -31,4 +36,11 @@ Some features are not supported:
  - Video/audio textures  
  - Keyboard  
  - Mouse  
+ - Playback pause/reset  
+ - Recompilation  
 
+The exe size is rather large due to SDL dependency.
+
+## Thanks
+
+All glory to iq and Beautypi for the coolest shader IDE around. Tremendous thanks and respect to all shadertoy users, democoders, party organizers, Khronos contributors, driver engineers, hardware designers and graphics enthusiasts everywhere.
