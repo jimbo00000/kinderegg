@@ -18,15 +18,19 @@ Timer g_timer;
 int winw = 800;
 int winh = 600;
 
-struct Shadertoy {
+struct renderpass {
     GLuint prog;
-    GLuint progsound;
     GLint uloc_iResolution;
     GLint uloc_iGlobalTime;
     GLint uloc_iMouse;
     GLint uloc_iDate;
     GLint uloc_iBlockOffset;
     GLint uloc_iSampleRate;
+};
+
+struct Shadertoy {
+    renderpass image;
+    renderpass sound;
 };
 
 Shadertoy g_toy;
@@ -89,11 +93,12 @@ void PollEvents()
 
 void display()
 {
-    glUseProgram(g_toy.prog);
-    if (g_toy.uloc_iResolution > -1) glUniform3f(g_toy.uloc_iResolution, (float)winw, (float)winh, 1.f);
-    if (g_toy.uloc_iGlobalTime > -1) glUniform1f(g_toy.uloc_iGlobalTime, g_timer.seconds());
-    if (g_toy.uloc_iMouse > -1) glUniform4f(g_toy.uloc_iMouse, 0.f, 0.f, 0.f, 0.f);
-    if (g_toy.uloc_iDate > -1) glUniform4f(g_toy.uloc_iDate, 2015.f, 3.f, 6.f, 6.f);
+    const renderpass& r = g_toy.image;
+    glUseProgram(r.prog);
+    if (r.uloc_iResolution > -1) glUniform3f(r.uloc_iResolution, (float)winw, (float)winh, 1.f);
+    if (r.uloc_iGlobalTime > -1) glUniform1f(r.uloc_iGlobalTime, g_timer.seconds());
+    if (r.uloc_iMouse > -1) glUniform4f(r.uloc_iMouse, 0.f, 0.f, 0.f, 0.f);
+    if (r.uloc_iDate > -1) glUniform4f(r.uloc_iDate, 2015.f, 3.f, 6.f, 6.f);
 
     glRecti(-1,-1,1,1);
 }
@@ -142,7 +147,8 @@ void play_audio()
     wave.soundlen = mPlayTime * wave.spec.freq;
     wave.sound = new Uint8[2*wave.soundlen];
     glViewport(0,0,512,512);
-    glUseProgram(g_toy.progsound);
+    const renderpass& r = g_toy.sound;
+    glUseProgram(r.prog);
 
     unsigned char* mData = new unsigned char[512*512*4];
     int mTmpBufferSamples = 262144;
@@ -151,7 +157,7 @@ void play_audio()
     for (int j=0; j<numBlocks; ++j)
     {
         int off = j * mTmpBufferSamples;
-        if (g_toy.uloc_iBlockOffset > -1) glUniform1f(g_toy.uloc_iBlockOffset, (float)off / (float)wave.spec.freq);
+        if (r.uloc_iBlockOffset > -1) glUniform1f(r.uloc_iBlockOffset, (float)off / (float)wave.spec.freq);
 
         glRecti(-1,-1,1,1);
         // mData: Uint8Array[1048576]
@@ -225,15 +231,17 @@ int main(void)
         exit(EXIT_FAILURE);
     }
 
-    g_toy.prog = makeShaderFromSource("passthru.vert", "image.frag");
-    g_toy.uloc_iResolution = glGetUniformLocation(g_toy.prog, "iResolution");
-    g_toy.uloc_iGlobalTime = glGetUniformLocation(g_toy.prog, "iGlobalTime");
-    g_toy.uloc_iMouse = glGetUniformLocation(g_toy.prog, "iMouse");
-    g_toy.uloc_iDate = glGetUniformLocation(g_toy.prog, "iDate");
+    renderpass& r = g_toy.image;
+    r.prog = makeShaderFromSource("passthru.vert", "image.frag");
+    r.uloc_iResolution = glGetUniformLocation(r.prog, "iResolution");
+    r.uloc_iGlobalTime = glGetUniformLocation(r.prog, "iGlobalTime");
+    r.uloc_iMouse = glGetUniformLocation(r.prog, "iMouse");
+    r.uloc_iDate = glGetUniformLocation(r.prog, "iDate");
 
-    g_toy.progsound = makeShaderFromSource("passthru.vert", "sound.frag");
-    g_toy.uloc_iBlockOffset = glGetUniformLocation(g_toy.progsound, "iBlockOffset");
-    g_toy.uloc_iSampleRate = glGetUniformLocation(g_toy.progsound, "iSampleRate");
+    renderpass& s = g_toy.sound;
+    s.prog = makeShaderFromSource("passthru.vert", "sound.frag");
+    s.uloc_iBlockOffset = glGetUniformLocation(s.prog, "iBlockOffset");
+    s.uloc_iSampleRate = glGetUniformLocation(s.prog, "iSampleRate");
 
     play_audio();
     glViewport(0,0, winw, winh);
