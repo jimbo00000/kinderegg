@@ -102,7 +102,6 @@ def queryShadertoy(id):
 		print(j['Error'])
 	else:
 		print('Success')
-		os.mkdir(id)
 		info = j['Shader']['info']
 		dumpReadmeFile(info, id)
 		renderpass = j['Shader']['renderpass']
@@ -115,7 +114,8 @@ def invokeBuild(id):
 	slnpath = '../build'
 	os.chdir(slnpath)
 	cmds = [
-		cmakepath + ' --build . --config Release',
+		cmakepath + ' ..',
+		cmakepath + ' --build . --config Release --clean-first',
 		'dir',]
 	for c in cmds:
 		print(c)
@@ -154,6 +154,7 @@ def main(argv=None):
 		print("Usage: requires one argument(shadertoy id)")
 		quit()
 	id = sys.argv[1]
+	os.mkdir(id)
 	queryShadertoy(id)
 	invokeBuild(id)
 
