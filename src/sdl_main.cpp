@@ -13,6 +13,7 @@
 
 #include "ShaderFunctions.h"
 #include "Timer.h"
+#include "g_textures.h"
 
 Timer g_timer;
 int winw = 800;

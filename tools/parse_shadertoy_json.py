@@ -73,6 +73,8 @@ def dumpTextureHeader(renderpass):
 							elif isinstance(p,tuple):
 								for x in p:
 									print(" " + str(x) + ",", end='', file=outStream)
+				else:
+					print('0', file=outStream)
 				print('};', file=outStream)
 				print('', file=outStream)
 
