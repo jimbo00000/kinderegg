@@ -103,8 +103,8 @@ def getShadertoyJson(id):
 def invokeBuild(dir):
 	"""Invoke CMake which in turn invokes designated compiler to build the executable."""
 	cmakepath = '"C:/Program Files (x86)/CMake/bin/cmake"'
-	#if not os.path.exists(cmakepath):
-	#	makepath = '"C:/Program Files (x86)/CMake 2.8/bin/cmake"'
+	if not os.path.exists(cmakepath):
+		cmakepath = '"C:/Program Files (x86)/CMake 2.8/bin/cmake"'
 	slnpath = '../build'
 	os.chdir(slnpath)
 	cmds = [
