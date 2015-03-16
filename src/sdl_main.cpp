@@ -250,6 +250,28 @@ int main(void)
     r.uloc_iMouse = glGetUniformLocation(r.prog, "iMouse");
     r.uloc_iDate = glGetUniformLocation(r.prog, "iDate");
 
+    {
+        GLuint t0 = 0;
+        glActiveTexture(GL_TEXTURE0);
+        glGenTextures(1, &t0);
+        glBindTexture(GL_TEXTURE_2D, t0);
+        GLuint mode = 0;
+        switch (tex00d)
+        {
+        default:break;
+        case 1: mode = GL_LUMINANCE;  break;
+        case 3: mode = GL_RGB; break;
+        case 4: mode = GL_RGBA; break;
+        }
+        glTexImage2D(GL_TEXTURE_2D,
+            0, GL_RGB,
+            tex00w, tex00h,
+            0, GL_RGB,
+            GL_UNSIGNED_BYTE,
+            tex00);
+        if (r.uloc_iChannel0 > -1) glUniform1i(r.uloc_iChannel0, t0);
+    }
+
     renderpass& s = g_toy.sound;
     s.prog = makeShaderFromSource("passthru.vert", "sound.frag");
     s.uloc_iBlockOffset = glGetUniformLocation(s.prog, "iBlockOffset");
