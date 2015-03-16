@@ -36,29 +36,38 @@ def dumpTextureHeader(renderpass):
 			print("  Pass ")
 			print(r['inputs'])
 			tex_id = 0
-			for t in r['inputs']:
-				texfile = os.path.basename(t['src'])
-				print("    tex" + str(t['channel']) + ": " + texfile)
-				img = Image.open(os.path.join(texDir,texfile))
-				px = img.load()
-
-				arrayname = 'tex' + str(pass_id) + str(tex_id)
+			for i in range(4):
+				inp = r['inputs']
+				w = 0
+				h = 0
+				d = 0
+				if i < len(inp):
+					t = inp[i]
+					texfile = os.path.basename(t['src'])
+					img = Image.open(os.path.join(texDir,texfile))
+					px = img.load()
+					w = img.size[0]
+					h = img.size[1]
+					d = img.mode
+				arrayname = 'tex' + str(pass_id) + str(i)
 				vardecl = 'int {0} = {1};'
-				print(vardecl.format(arrayname+'w', img.size[0]), file=outStream)
-				print(vardecl.format(arrayname+'h', img.size[1]), file=outStream)
+				print(vardecl.format(arrayname+'w', w), file=outStream)
+				print(vardecl.format(arrayname+'h', h), file=outStream)
+				print(vardecl.format(arrayname+'d', d), file=outStream)
 
 				arrdecl = 'char {0}[] = '
 				print(arrdecl.format(arrayname), file=outStream)
 				print('{', file=outStream)
-				for j in range(10):#img.size[1]):
-					for i in range(10):#img.size[0]):
-						p = px[i,j]
-						if isinstance(p,int):
-							print(" " + str(p) + ",", end='', file=outStream)
-						elif isinstance(p,tuple):
-							for x in p:
-								print(" " + str(x) + ",", end='', file=outStream)
-				print('}', file=outStream)
+				if i < len(inp):
+					for j in range(10):#img.size[1]):
+						for i in range(10):#img.size[0]):
+							p = px[i,j]
+							if isinstance(p,int):
+								print(" " + str(p) + ",", end='', file=outStream)
+							elif isinstance(p,tuple):
+								for x in p:
+									print(" " + str(x) + ",", end='', file=outStream)
+				print('};', file=outStream)
 				print('', file=outStream)
 
 				tex_id += 1
