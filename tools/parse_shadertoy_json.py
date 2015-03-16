@@ -53,6 +53,8 @@ def dumpTextureHeader(renderpass):
 						d = 1
 					elif m == 'RGB':
 						d = 3
+					elif m == 'RGBA':
+						d = 4
 					else:
 						print('Unknown mode: ' + m)
 				arrayname = 'tex' + str(pass_id) + str(i)
