@@ -26,17 +26,19 @@ textureHeader = """/*
  */
 """
 def dumpTextureHeader(renderpass):
-	readmeFileOut = 'g_textures.h'
+	texFileOut = os.path.join('..', 'autogen', 'g_textures.h')
 	texDir = os.path.join('..', 'textures')
-	with open(readmeFileOut,'w') as outStream:
+	with open(texFileOut,'w') as outStream:
 		print(textureHeader, file=outStream)
 		pass_id = 0
 		for r in renderpass:
 			# Pull out textures
+			print("  Pass ")
+			print(r['inputs'])
 			tex_id = 0
 			for t in r['inputs']:
 				texfile = os.path.basename(t['src'])
-				print("    tex" + str(t['channel']) + ": " + texfile, end='')
+				print("    tex" + str(t['channel']) + ": " + texfile)
 				img = Image.open(os.path.join(texDir,texfile))
 				px = img.load()
 
@@ -48,8 +50,8 @@ def dumpTextureHeader(renderpass):
 				arrdecl = 'char {0}[] = '
 				print(arrdecl.format(arrayname), file=outStream)
 				print('{', file=outStream)
-				for j in range(img.size[1]):
-					for i in range(img.size[0]):
+				for j in range(10):#img.size[1]):
+					for i in range(10):#img.size[0]):
 						p = px[i,j]
 						if isinstance(p,int):
 							print(" " + str(p) + ",", end='', file=outStream)
@@ -75,15 +77,6 @@ def dumpShaderFiles(renderpass):
 		with open(os.path.join(shaderDir, shfile),'w') as outStream:
 			print(src, file=outStream)
 		print(shfile + ": " + str(len(src)) + " bytes written.")
-
-
-def parseJson(j):
-	#print(json.dumps(j,indent=1))
-	info = j['Shader']['info']
-	dumpReadmeFile(info)
-	renderpass = j['Shader']['renderpass']
-	#dumpTextureHeader(renderpass)
-	dumpShaderFiles(renderpass)
 
 
 def getShadertoyJson(id):
@@ -159,7 +152,8 @@ def main(argv=None):
 		dumpReadmeFile(info, dir)
 		renderpass = j['Shader']['renderpass']
 		dumpShaderFiles(renderpass)
-		invokeBuild(dir)
+		dumpTextureHeader(renderpass)
+		#invokeBuild(dir)
 		print(id)
 		print(name + " by " + info['username'])
 
