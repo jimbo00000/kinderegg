@@ -48,7 +48,13 @@ def dumpTextureHeader(renderpass):
 					px = img.load()
 					w = img.size[0]
 					h = img.size[1]
-					d = img.mode
+					m = img.mode
+					if m == 'L':
+						d = 1
+					elif m == 'RGB':
+						d = 3
+					else:
+						print('Unknown mode: ' + m)
 				arrayname = 'tex' + str(pass_id) + str(i)
 				vardecl = 'int {0} = {1};'
 				print(vardecl.format(arrayname+'w', w), file=outStream)
@@ -59,8 +65,8 @@ def dumpTextureHeader(renderpass):
 				print(arrdecl.format(arrayname), file=outStream)
 				print('{', file=outStream)
 				if i < len(inp):
-					for j in range(10):#img.size[1]):
-						for i in range(10):#img.size[0]):
+					for j in range(img.size[1]):
+						for i in range(img.size[0]):
 							p = px[i,j]
 							if isinstance(p,int):
 								print(" " + str(p) + ",", end='', file=outStream)
