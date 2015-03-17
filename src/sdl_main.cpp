@@ -268,7 +268,7 @@ int main(void)
             tex00w, tex00h,
             0, GL_RGB,
             GL_UNSIGNED_BYTE,
-            tex00);
+            NULL); ///@todo load from file
         if (r.uloc_iChannel0 > -1) glUniform1i(r.uloc_iChannel0, t0);
     }
 

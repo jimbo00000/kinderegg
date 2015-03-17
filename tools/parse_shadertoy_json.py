@@ -66,7 +66,9 @@ def dumpTextureHeader(renderpass):
 				arrdecl = 'char {0}[] = '
 				print(arrdecl.format(arrayname), file=outStream)
 				print('{', file=outStream)
-				if i < len(inp):
+				if False:
+					# This is just ridiculously impractical...
+				#if i < len(inp):
 					for j in range(img.size[1]):
 						for i in range(img.size[0]):
 							p = px[i,j]
