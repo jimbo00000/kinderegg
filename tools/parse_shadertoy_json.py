@@ -8,6 +8,22 @@ import shutil
 import requests
 from PIL import Image
 
+def deleteGeneratedFiles():
+	"""Delete old versions of generated files."""
+	autogenDir = os.path.join('..', 'autogen')
+	shadersDir = os.path.join('..', 'shaders')
+	files = [
+		os.path.join(autogenDir, 'g_textures.h'),
+		os.path.join(autogenDir, 'g_shaders.h'),
+		os.path.join(shadersDir, 'image.frag'),
+		os.path.join(shadersDir, 'sound.frag')]
+	for f in files:
+		try:
+			os.remove(f)
+		except:
+			pass
+
+
 def dumpReadmeFile(info, dir):
 	readmeFileOut = os.path.join(dir, 'README.txt')
 	with open(readmeFileOut,'w') as outStream:
@@ -172,9 +188,10 @@ def main(argv=None):
 			os.mkdir(dir)
 		dumpReadmeFile(info, dir)
 		renderpass = j['Shader']['renderpass']
+		deleteGeneratedFiles()
 		dumpShaderFiles(renderpass)
 		dumpTextureHeader(renderpass)
-		#invokeBuild(dir)
+		invokeBuild(dir)
 		print(id)
 		print(name + " by " + info['username'])
 
