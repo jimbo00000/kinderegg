@@ -6,6 +6,9 @@
 #  include <windows.h>
 #endif
 
+#include <fstream>
+#include <vector>
+
 #include <GL/glew.h>
 #include <SDL.h>
 #include <SDL_syswm.h>
@@ -33,6 +36,7 @@ struct renderpass {
     GLint uloc_iDate;
     GLint uloc_iBlockOffset;
     GLint uloc_iSampleRate;
+    GLuint tex0;
 };
 
 struct Shadertoy {
@@ -106,6 +110,10 @@ void display()
     if (r.uloc_iGlobalTime > -1) glUniform1f(r.uloc_iGlobalTime, g_timer.seconds());
     if (r.uloc_iMouse > -1) glUniform4f(r.uloc_iMouse, 0.f, 0.f, 0.f, 0.f);
     if (r.uloc_iDate > -1) glUniform4f(r.uloc_iDate, 2015.f, 3.f, 6.f, 6.f);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, r.tex0);
+    if (r.uloc_iChannel0 > -1) glUniform1i(r.uloc_iChannel0, 0);
 
     glRecti(-1,-1,1,1);
 }
@@ -263,12 +271,26 @@ int main(void)
         case 3: mode = GL_RGB; break;
         case 4: mode = GL_RGBA; break;
         }
-        glTexImage2D(GL_TEXTURE_2D,
-            0, GL_RGB,
-            tex00w, tex00h,
-            0, GL_RGB,
-            GL_UNSIGNED_BYTE,
-            NULL); ///@todo load from file
+
+        std::ifstream file("tex00", std::ios::binary);
+        file.seekg(0, std::ios::end);
+        std::streamsize size = file.tellg();
+        file.seekg(0, std::ios::beg);
+        std::vector<char> buffer(size);
+        if (file.read(buffer.data(), size))
+        {
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+
+            glTexImage2D(GL_TEXTURE_2D,
+                0, GL_RGB,
+                tex00w, tex00h,
+                0, GL_RGB,
+                GL_UNSIGNED_BYTE,
+                &buffer[0]);
+            r.tex0 = t0;
+        }
+
         if (r.uloc_iChannel0 > -1) glUniform1i(r.uloc_iChannel0, t0);
     }
 
