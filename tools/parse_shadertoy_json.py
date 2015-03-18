@@ -89,21 +89,13 @@ def dumpTextureFiles(dir, renderpass):
 							elif isinstance(p,tuple):
 								for ch in p:
 									pixels.append(ch)
-							# This is just ridiculously impractical...
-							"""
-							if isinstance(p,int):
-								print(" " + str(p) + ",", end='', file=outStream)
-							elif isinstance(p,tuple):
-								for x in p:
-									print(" " + str(x) + ",", end='', file=outStream)
-							"""
-				# Write pixels array to binary file
-				binFile = os.path.join(dir, arrayname)
-				print("writing " + str(len(pixels)) + " bytes to " + binFile)
-				print(pixels[0:10])
-				pxByteArray = bytearray(pixels)
-				with open(binFile,'wb') as pxBinOut:
-					pxBinOut.write(pxByteArray)
+					# Write pixels array to binary file
+					binFile = os.path.join(dir, arrayname)
+					print("writing " + str(len(pixels)) + " bytes to " + binFile)
+					print(pixels[0:10])
+					pxByteArray = bytearray(pixels)
+					with open(binFile,'wb') as pxBinOut:
+						pxBinOut.write(pxByteArray)
 
 				tex_id += 1
 			pass_id += 1
