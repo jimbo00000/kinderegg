@@ -28,15 +28,12 @@ struct renderpass {
     GLint uloc_iGlobalTime;
     GLint uloc_iChannelResolution;
     //iChannelTime not implemented
-    GLint uloc_iChannel0;
-    GLint uloc_iChannel1;
-    GLint uloc_iChannel2;
-    GLint uloc_iChannel3;
+    GLint uloc_iChannel[4];
     GLint uloc_iMouse;
     GLint uloc_iDate;
     GLint uloc_iBlockOffset;
     GLint uloc_iSampleRate;
-    GLuint tex0;
+    GLuint texs[4];
 };
 
 struct Shadertoy {
@@ -111,10 +108,12 @@ void display()
     if (r.uloc_iMouse > -1) glUniform4f(r.uloc_iMouse, 0.f, 0.f, 0.f, 0.f);
     if (r.uloc_iDate > -1) glUniform4f(r.uloc_iDate, 2015.f, 3.f, 6.f, 6.f);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, r.tex0);
-    if (r.uloc_iChannel0 > -1) glUniform1i(r.uloc_iChannel0, 0);
-
+    for (int i=0; i<4; ++i)
+    {
+        glActiveTexture(GL_TEXTURE0+i);
+        glBindTexture(GL_TEXTURE_2D, r.texs[i]);
+        if (r.uloc_iChannel[i] > -1) glUniform1i(r.uloc_iChannel[i], i);
+    }
     glRecti(-1,-1,1,1);
 }
 
@@ -251,20 +250,26 @@ int main(void)
     r.uloc_iResolution = glGetUniformLocation(r.prog, "iResolution");
     r.uloc_iGlobalTime = glGetUniformLocation(r.prog, "iGlobalTime");
     r.uloc_iChannelResolution = glGetUniformLocation(r.prog, "iChannelResolution");
-    r.uloc_iChannel0 = glGetUniformLocation(r.prog, "iChannel0");
-    r.uloc_iChannel1 = glGetUniformLocation(r.prog, "iChannel1");
-    r.uloc_iChannel2 = glGetUniformLocation(r.prog, "iChannel2");
-    r.uloc_iChannel3 = glGetUniformLocation(r.prog, "iChannel3");
+    r.uloc_iChannel[0] = glGetUniformLocation(r.prog, "iChannel0");
+    r.uloc_iChannel[1] = glGetUniformLocation(r.prog, "iChannel1");
+    r.uloc_iChannel[2] = glGetUniformLocation(r.prog, "iChannel2");
+    r.uloc_iChannel[3] = glGetUniformLocation(r.prog, "iChannel3");
     r.uloc_iMouse = glGetUniformLocation(r.prog, "iMouse");
     r.uloc_iDate = glGetUniformLocation(r.prog, "iDate");
 
+    for (int i=0; i<4; ++i)
     {
-        GLuint t0 = 0;
-        glActiveTexture(GL_TEXTURE0);
-        glGenTextures(1, &t0);
-        glBindTexture(GL_TEXTURE_2D, t0);
+        const int w = texdims[3*i];
+        const int h = texdims[3*i+1];
+        const int d = texdims[3*i+2];
+        if (w == 0)
+            continue;
+        GLuint t = 0;
+        glActiveTexture(GL_TEXTURE0+i);
+        glGenTextures(1, &t);
+        glBindTexture(GL_TEXTURE_2D, t);
         GLuint mode = 0;
-        switch (tex00d)
+        switch (d)
         {
         default:break;
         case 1: mode = GL_LUMINANCE;  break;
@@ -272,7 +277,11 @@ int main(void)
         case 4: mode = GL_RGBA; break;
         }
 
-        std::ifstream file("tex00", std::ios::binary);
+        char texname[6] = "tex00";
+        texname[4] += i;
+        std::ifstream file(texname, std::ios::binary);
+        if (!file.is_open())
+            continue;
         file.seekg(0, std::ios::end);
         std::streamsize size = file.tellg();
         file.seekg(0, std::ios::beg);
@@ -283,15 +292,13 @@ int main(void)
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 
             glTexImage2D(GL_TEXTURE_2D,
-                0, GL_RGB,
-                tex00w, tex00h,
-                0, GL_RGB,
+                0, mode,
+                w, h,
+                0, mode,
                 GL_UNSIGNED_BYTE,
                 &buffer[0]);
-            r.tex0 = t0;
+            r.texs[i] = t;
         }
-
-        if (r.uloc_iChannel0 > -1) glUniform1i(r.uloc_iChannel0, t0);
     }
 
     renderpass& s = g_toy.sound;

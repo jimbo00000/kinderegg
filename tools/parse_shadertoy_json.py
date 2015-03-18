@@ -47,6 +47,7 @@ def dumpTextureFiles(dir, renderpass):
 	with open(texFileOut,'w') as outStream:
 		print(textureHeader, file=outStream)
 		pass_id = 0
+		print('int texdims[] = {', file=outStream)
 		for r in renderpass:
 			# Pull out textures
 			print("  Pass ")
@@ -57,6 +58,7 @@ def dumpTextureFiles(dir, renderpass):
 				w = 0
 				h = 0
 				d = 0
+				# Texture dimensions - write to C source header
 				if i < len(inp):
 					t = inp[i]
 					texfile = os.path.basename(t['src'])
@@ -74,16 +76,16 @@ def dumpTextureFiles(dir, renderpass):
 					else:
 						print('Unknown mode: ' + m)
 				arrayname = 'tex' + str(pass_id) + str(i)
-				vardecl = 'int {0} = {1};'
-				print(vardecl.format(arrayname+'w', w), file=outStream)
-				print(vardecl.format(arrayname+'h', h), file=outStream)
-				print(vardecl.format(arrayname+'d', d), file=outStream)
+				print(arrayname)
+				texline = '{0}, {1}, {2},'
+				print(texline.format(w,h,d), file=outStream)
 
+				# Texture data - store to files in prod dir
 				pixels = []
 				if i < len(inp):
 					for j in range(img.size[1]):
-						for i in range(img.size[0]):
-							p = px[i,j]
+						for k in range(img.size[0]):
+							p = px[k,j]
 							if isinstance(p,int):
 								pixels.append(p)
 							elif isinstance(p,tuple):
@@ -99,6 +101,7 @@ def dumpTextureFiles(dir, renderpass):
 
 				tex_id += 1
 			pass_id += 1
+		print('};', file=outStream)
 
 
 def dumpShaderFiles(renderpass):
