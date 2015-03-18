@@ -192,7 +192,10 @@ def main(argv=None):
 		print('Success')
 		info = j['Shader']['info']
 		name = info['name']
-		dir = name
+		proddir = 'prods'
+		if not os.path.exists(proddir):
+			os.mkdir(proddir)
+		dir = os.path.join('prods', name)
 		if not os.path.exists(dir):
 			os.mkdir(dir)
 		dumpReadmeFile(info, dir)
