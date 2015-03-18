@@ -175,7 +175,7 @@ void play_audio()
     glUseProgram(r.prog);
 
     unsigned char* mData = new unsigned char[512*512*4];
-    int mTmpBufferSamples = 262144;
+    int mTmpBufferSamples = 512*512;
     int mPlaySamples = wave.soundlen;
     int numBlocks = mPlaySamples / mTmpBufferSamples;
     for (int j=0; j<numBlocks; ++j)
@@ -188,8 +188,12 @@ void play_audio()
         glReadPixels(0,0,512,512, GL_RGBA, GL_UNSIGNED_BYTE, mData);
         for (int i = 0; i<mTmpBufferSamples; ++i)
         {
-            const float aL = -1.0f + 2.0f*((float)mData[4 * i + 0] + 256.0f*(float)mData[4 * i + 1]) / 65535.0f;
-            const float aR = -1.0f + 2.0f*((float)mData[4 * i + 2] + 256.0f*(float)mData[4 * i + 3]) / 65535.0f;
+            unsigned char Llo = mData[4*i+0];
+            unsigned char Lhi = mData[4*i+1];
+            unsigned char Rlo = mData[4*i+2];
+            unsigned char Rhi = mData[4*i+3];
+            const float aL = -1.0f + 2.0f*((float)Llo + 256.0f*(float)Lhi) / 65535.0f;
+            const float aR = -1.0f + 2.0f*((float)Rlo + 256.0f*(float)Rhi) / 65535.0f;
             wave.sound[2*(off + i)  ] = (unsigned char)(.5f*(1.f+aL) * 255.f);
             wave.sound[2*(off + i)+1] = (unsigned char)(.5f*(1.f+aR) * 255.f);
         }
@@ -219,7 +223,7 @@ int main(void)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-    
+    SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, 8);
     int winw = 800;
     int winh = 600;
 
