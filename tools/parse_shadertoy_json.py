@@ -169,13 +169,8 @@ def main(argv=None):
 	# https://www.shadertoy.com/api/v1/shaders/query/string?key=appkey
 	# Broken examples:
 	# ldXXDj - Pirates by iq
-	# 4dfXWj - Music Mario by iq
-	# XdfXWS - Music - Pulsating by iq
-
-	# 4df3D8
-	# 4dl3zn - Bubbles by iq
+	# XsX3RB - Volcanic by iq
 	# MdB3Rc
-	# lts3zn - cardboard waves
 	if len(sys.argv) <= 1:
 		print("Usage: requires one argument(shadertoy id)")
 		quit()

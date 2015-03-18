@@ -27,7 +27,11 @@ Once finished, there should be a complete, running production in the new directo
 ## Working Examples
 
  - [lssXWS]() Music - Harry Potter by iq
+ - [4dl3zn]() Bubbles by iq
+ - [4dfXWj]() Music - Mario by iq
+ - [XdfXWS]() Music - Pulsating by iq
  - [lsfXDl]() Whitney wheel by lost4468
+ - [lts3zn]() Cardboard Waves by jimbo00000
  - [4tfGRM]() Shulgins' Eye by jimbo00000
 
 ## Features
