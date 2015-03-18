@@ -106,7 +106,17 @@ void display()
     if (r.uloc_iResolution > -1) glUniform3f(r.uloc_iResolution, (float)winw, (float)winh, 1.f);
     if (r.uloc_iGlobalTime > -1) glUniform1f(r.uloc_iGlobalTime, g_timer.seconds());
     if (r.uloc_iMouse > -1) glUniform4f(r.uloc_iMouse, 0.f, 0.f, 0.f, 0.f);
-    if (r.uloc_iDate > -1) glUniform4f(r.uloc_iDate, 2015.f, 3.f, 6.f, 6.f);
+
+    SYSTEMTIME stNow;
+    GetSystemTime(&stNow);
+    if (r.uloc_iDate > -1) glUniform4f(r.uloc_iDate,
+        (float)stNow.wYear,
+        (float)stNow.wMonth - 1.f,
+        (float)stNow.wDay,
+        (float)stNow.wHour*60.f*60.f +
+        (float)stNow.wMinute*60.f +
+        (float)stNow.wSecond
+        );
 
     for (int i=0; i<4; ++i)
     {
