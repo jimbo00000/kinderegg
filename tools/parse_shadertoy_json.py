@@ -118,8 +118,8 @@ def dumpShaderFiles(renderpass):
 		print(shfile + ": " + str(len(src)) + " bytes written.")
 
 
-def getShadertoyJson(id):
-	"""Send a request to Shaderoy.com for the given shadertoy id.
+def getShadertoyJsonFromSite(id):
+	"""Send a request to Shadertoy.com for the given shadertoy id.
 	Store your API key in the filename below.
 	"""
 	apikey = "xxxxxx"
@@ -130,6 +130,15 @@ def getShadertoyJson(id):
 	r = requests.get(req)
 	print(r)
 	return r.json()
+
+
+def getShadertoyJsonFromFile(filename):
+	"""Load json from a file on disk."""
+	try:
+		j = json.loads(open(filename).read())
+		return j
+	except:
+		pass
 
 
 def invokeBuild(dir):
@@ -172,10 +181,16 @@ def main(argv=None):
 	# XsX3RB - Volcanic by iq
 	# MdB3Rc
 	if len(sys.argv) <= 1:
-		print("Usage: requires one argument(shadertoy id)")
+		print("Usage:")
+		print("    python parse_shadertoy_json.py <jsonfile>")
+		print("    python parse_shadertoy_json.py <id>")
 		quit()
 	id = sys.argv[1]
-	j = getShadertoyJson(id)
+	j = getShadertoyJsonFromFile(id)
+	if j is None:
+		print("File " + id + " not found.")
+		j = getShadertoyJsonFromSite(id)
+
 	if 'Error' in j:
 		print(j['Error'])
 	else:
