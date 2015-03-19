@@ -108,7 +108,7 @@ void display()
     if (r.uloc_iMouse > -1) glUniform4f(r.uloc_iMouse, 0.f, 0.f, 0.f, 0.f);
 
     SYSTEMTIME stNow;
-    GetSystemTime(&stNow);
+    GetLocalTime(&stNow);
     if (r.uloc_iDate > -1) glUniform4f(r.uloc_iDate,
         (float)stNow.wYear,
         (float)stNow.wMonth - 1.f,
