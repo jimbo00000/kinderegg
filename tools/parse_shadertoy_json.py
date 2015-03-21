@@ -196,6 +196,10 @@ def main(argv=None):
 	else:
 		print('Success')
 		info = j['Shader']['info']
+		# Sanitize name
+		import string
+		valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+		info['name'] = ''.join(c for c in info['name'] if c in valid_chars)
 		name = info['name']
 		proddir = 'prods'
 		if not os.path.exists(proddir):
