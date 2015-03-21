@@ -104,6 +104,24 @@ void display()
     const renderpass& r = g_toy.image;
     glUseProgram(r.prog);
     if (r.uloc_iResolution > -1) glUniform3f(r.uloc_iResolution, (float)winw, (float)winh, 1.f);
+    if (r.uloc_iChannelResolution > -1)
+    {
+        float resos[] = {
+            (float)texdims[3*0+0],
+            (float)texdims[3*0+1],
+            (float)texdims[3*0+2],
+            (float)texdims[3*1+0],
+            (float)texdims[3*1+1],
+            (float)texdims[3*1+2],
+            (float)texdims[3*2+0],
+            (float)texdims[3*2+1],
+            (float)texdims[3*2+2],
+            (float)texdims[3*3+0],
+            (float)texdims[3*3+1],
+            (float)texdims[3*3+2],
+        };
+        glUniform3fv(r.uloc_iChannelResolution, 4, resos);
+    }
     if (r.uloc_iGlobalTime > -1) glUniform1f(r.uloc_iGlobalTime, g_timer.seconds());
     if (r.uloc_iMouse > -1) glUniform4f(r.uloc_iMouse, 0.f, 0.f, 0.f, 0.f);
 
