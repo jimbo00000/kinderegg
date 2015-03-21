@@ -223,15 +223,22 @@ int main(void)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-    SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, 8);
-    int winw = 800;
-    int winh = 600;
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
     SDL_Window* pWindow = SDL_CreateWindow(
         shadername, // written to autogen/g_textures.h
         100, 100,
         winw, winh,
-        SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+#ifdef NDEBUG
+        SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_OPENGL
+#else
+        SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL
+#endif
+        );
+    SDL_GetWindowSize(pWindow, &winw, &winh);
+#ifdef NDEBUG
+    SDL_ShowCursor(0);
+#endif
 
     // thank you http://www.brandonfoltz.com/2013/12/example-using-opengl-3-0-with-sdl2-and-glew/
     SDL_GLContext glContext = SDL_GL_CreateContext(pWindow);
