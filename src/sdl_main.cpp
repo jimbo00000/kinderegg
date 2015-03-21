@@ -168,8 +168,9 @@ void play_audio()
     wave.spec.callback = fillerup;
 
     const int mPlayTime = 60; // Shadertoy gives 60 seconds of audio
-    wave.soundlen = mPlayTime * wave.spec.freq * 2; // interlaced stereo
+    wave.soundlen = mPlayTime * wave.spec.freq * 2 * sizeof(Uint8); // interlaced stereo
     wave.sound = new Uint8[wave.soundlen];
+    Uint8* pWaveData = wave.sound;
     glViewport(0,0,512,512);
     const renderpass& r = g_toy.sound;
     glUseProgram(r.prog);
@@ -194,8 +195,8 @@ void play_audio()
             unsigned char Rhi = mData[4*i+3];
             const float aL = ((float)Llo + 256.f*(float)Lhi) / 65535.f;
             const float aR = ((float)Rlo + 256.f*(float)Rhi) / 65535.f;
-            wave.sound[2*(off + i)  ] = (unsigned char)(aL * 255.f);
-            wave.sound[2*(off + i)+1] = (unsigned char)(aR * 255.f);
+            pWaveData[2*(off + i)  ] = (unsigned char)(aL * 255.f);
+            pWaveData[2*(off + i)+1] = (unsigned char)(aR * 255.f);
         }
     }
     delete [] mData;
