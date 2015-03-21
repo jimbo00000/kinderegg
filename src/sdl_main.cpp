@@ -168,15 +168,15 @@ void play_audio()
     wave.spec.callback = fillerup;
 
     const int mPlayTime = 60; // Shadertoy gives 60 seconds of audio
-    wave.soundlen = mPlayTime * wave.spec.freq;
-    wave.sound = new Uint8[2*wave.soundlen];
+    wave.soundlen = mPlayTime * wave.spec.freq * 2; // interlaced stereo
+    wave.sound = new Uint8[wave.soundlen];
     glViewport(0,0,512,512);
     const renderpass& r = g_toy.sound;
     glUseProgram(r.prog);
 
     unsigned char* mData = new unsigned char[512*512*4];
     int mTmpBufferSamples = 512*512;
-    int mPlaySamples = wave.soundlen;
+    int mPlaySamples = wave.soundlen / 2;
     int numBlocks = mPlaySamples / mTmpBufferSamples;
     for (int j=0; j<numBlocks; ++j)
     {
