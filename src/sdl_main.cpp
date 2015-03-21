@@ -192,10 +192,10 @@ void play_audio()
             unsigned char Lhi = mData[4*i+1];
             unsigned char Rlo = mData[4*i+2];
             unsigned char Rhi = mData[4*i+3];
-            const float aL = -1.0f + 2.0f*((float)Llo + 256.0f*(float)Lhi) / 65535.0f;
-            const float aR = -1.0f + 2.0f*((float)Rlo + 256.0f*(float)Rhi) / 65535.0f;
-            wave.sound[2*(off + i)  ] = (unsigned char)(.5f*(1.f+aL) * 255.f);
-            wave.sound[2*(off + i)+1] = (unsigned char)(.5f*(1.f+aR) * 255.f);
+            const float aL = ((float)Llo + 256.f*(float)Lhi) / 65535.f;
+            const float aR = ((float)Rlo + 256.f*(float)Rhi) / 65535.f;
+            wave.sound[2*(off + i)  ] = (unsigned char)(aL * 255.f);
+            wave.sound[2*(off + i)+1] = (unsigned char)(aR * 255.f);
         }
     }
     delete [] mData;
