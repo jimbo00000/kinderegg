@@ -228,8 +228,8 @@ int main(void)
     int winh = 600;
 
     SDL_Window* pWindow = SDL_CreateWindow(
-        "kinderegg",
-        100,100,
+        shadername, // written to autogen/g_textures.h
+        100, 100,
         winw, winh,
         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
