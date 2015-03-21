@@ -163,14 +163,14 @@ void SDLCALL fillerup(void *unused, Uint8 * stream, int len)
 void play_audio()
 {
     wave.spec.freq = 44100;
-    wave.spec.format = AUDIO_U8; //AUDIO_S16LSB;
+    wave.spec.format = AUDIO_F32;
     wave.spec.channels = 2;
     wave.spec.callback = fillerup;
 
     const int mPlayTime = 60; // Shadertoy gives 60 seconds of audio
-    wave.soundlen = mPlayTime * wave.spec.freq * 2 * sizeof(Uint8); // interlaced stereo
-    wave.sound = new Uint8[wave.soundlen];
-    Uint8* pWaveData = wave.sound;
+    wave.soundlen = mPlayTime * wave.spec.freq * 2 * sizeof(float); // interlaced stereo
+    wave.sound = new Uint8[wave.soundlen * sizeof(float)];
+    float* pWaveData = (float*)wave.sound;
     glViewport(0,0,512,512);
     const renderpass& r = g_toy.sound;
     glUseProgram(r.prog);
@@ -185,7 +185,6 @@ void play_audio()
         if (r.uloc_iBlockOffset > -1) glUniform1f(r.uloc_iBlockOffset, (float)off / (float)wave.spec.freq);
 
         glRecti(-1,-1,1,1);
-        // mData: Uint8Array[1048576]
         glReadPixels(0,0,512,512, GL_RGBA, GL_UNSIGNED_BYTE, mData);
         for (int i = 0; i<mTmpBufferSamples; ++i)
         {
@@ -195,8 +194,8 @@ void play_audio()
             unsigned char Rhi = mData[4*i+3];
             const float aL = ((float)Llo + 256.f*(float)Lhi) / 65535.f;
             const float aR = ((float)Rlo + 256.f*(float)Rhi) / 65535.f;
-            pWaveData[2*(off + i)  ] = (unsigned char)(aL * 255.f);
-            pWaveData[2*(off + i)+1] = (unsigned char)(aR * 255.f);
+            pWaveData[2*(off + i)  ] = aL;
+            pWaveData[2*(off + i)+1] = aR;
         }
     }
     delete [] mData;
