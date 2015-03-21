@@ -156,12 +156,15 @@ def invokeBuild(dir):
 	for c in cmds:
 		print(c)
 		os.system(c)
-	# Copy built exe to output dir
+
+
+def copyExecutable(dir, name):
+	"""Copy the built exe to the output directory."""
 	kepath = "Release"
 	keexe = "kinderegg.exe" # specified in CMakeLists.txt
 	shutil.copyfile(
 		os.path.join(kepath, keexe),
-		os.path.join('..', 'tools', dir, keexe))
+		os.path.join('..', 'tools', dir, name+'.exe'))
 	# Copy SDL2.dll to output dir
 	sdlpath = 'C:/lib/SDL2-2.0.3'
 	sdllibpath = 'lib/x86'
@@ -213,6 +216,7 @@ def main(argv=None):
 		dumpShaderFiles(renderpass)
 		dumpTextureFiles(dir, renderpass)
 		invokeBuild(dir)
+		copyExecutable(dir, name)
 		print(id)
 		print(name + " by " + info['username'])
 
