@@ -20,8 +20,6 @@ void main()
 """
 imageHeader = """
 #version 120
-precision highp float;
-precision highp int;
 uniform vec3 iResolution; // viewport resolution (in pixels)
 uniform float iGlobalTime; // shader playback time (in seconds)
 uniform vec3      iChannelResolution[4]; // channel resolution (in pixels)
